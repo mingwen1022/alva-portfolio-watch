@@ -3921,6 +3921,15 @@ const inWindow = a => {
   return isNaN(t) ? true : t >= w;
 };
 
+/* 窗口边界的那一刻：当前 UTC 日的零点。它由 META.now 推出来，是**派生**时刻，
+   不是任何一个原始字段的值。auditPageTimes 的白名单里要有它 ——
+   ⚠️ 此前它一直通过，纯属巧合：mock 里 META.now 恰好是 20:00 ET，
+   而这个边界印出来也是 20:00，于是它一直在白名单里。换成真实数据就露了。
+   由同一个函数产出，两处不可能再分叉。 */
+const alertWindowStartISO = () => {
+  const inst = new Date(String((typeof META!=='undefined' && META.now) || '').replace(' ', 'T'));
+  return isNaN(inst) ? null : inst.toISOString().slice(0, 10) + 'T00:00:00Z';
+};
 const alertWindowLabel = () => {
   if (!POSITIONS.some(p => p.cls === 'crypto')) return '';
   /* ⚠️ 不能 `slice(0,10)` 取日期。META.now 带偏移（`2026-08-21T20:05:00-04:00`），
@@ -3929,7 +3938,7 @@ const alertWindowLabel = () => {
      先解析成瞬时，再取它的 UTC 日期。 */
   const inst = new Date(String(META.now || '').replace(' ', 'T'));
   if (isNaN(inst)) return '';
-  const ws = inst.toISOString().slice(0, 10) + 'T00:00:00Z';
+  const ws = alertWindowStartISO();
   const lab = etDate(ws) + ' ' + hhmm(ws);
   return lab.trim() ? T('windowSince', lab) : '';
 };
@@ -4907,6 +4916,7 @@ function auditPageTimes(){
   const ok=new Set(), addISO=t=>{ if(t) ok.add(hhmm(t)); };
   const addTxt=t=>{ const m=String(t).match(/\d{1,2}:\d{2}/); if(m) ok.add(m[0]); };
   addISO(META.now); Object.values(META.freshness).forEach(addISO);
+  addISO(alertWindowStartISO());   /* 派生但有来源，见该函数上方 */
   ok.add(SESSION_CLOSE);
   /* ⚠️ ALL_ALERTS, not FINDINGS: the vocabulary this check compares against was narrowed
      by the book filter and emptied by the alerts switch, while the page it scans carries
@@ -6138,8 +6148,18 @@ function auditContractShape(){
     Object.keys(f).forEach(k=>{ if(!want.has(k)) bad.push(`${f.id}: extra key \`${k}\``); });
     FINDING_KEYS.forEach(k=>{ if(!(k in f)) bad.push(`${f.id}: missing key \`${k}\``); });
     const c=f.context||{};
+    /* ⚠️ 用户线不带 `attribution`，契约明写（§findings「US1–3 · 无 attribution」），
+       `userlines.js` 也刻意不写：`{timing:"none"}` 的意思是「找过了，今天没有相关报道」，
+       而用户线**根本没找过**。写一个值上去就是替它编了一次检索。
+       豁免明列在这里，不靠 `k in c` 恰好为真而静默跳过 —— 那两者长得一模一样。 */
+    const EXEMPT_CTX = /^US[123]$/.test(f.signalId) ? new Set(['attribution']) : new Set();
     Object.keys(c).forEach(k=>{ if(!wantC.has(k)) bad.push(`${f.id}: extra context key \`${k}\``); });
-    CONTEXT_KEYS.forEach(k=>{ if(!(k in c)) bad.push(`${f.id}: missing context key \`${k}\``); });
+    CONTEXT_KEYS.forEach(k=>{ if(!(k in c) && !EXEMPT_CTX.has(k))
+      bad.push(`${f.id}: missing context key \`${k}\``); });
+    /* 反过来也要查：豁免的键**出现了**同样是错 —— 否则这条豁免会变成一张免检牌，
+       哪天 producer 真写了一个假的 attribution 上去，这里不会响。 */
+    EXEMPT_CTX.forEach(k=>{ if(k in c)
+      bad.push(`${f.id}: 用户线不该带 \`${k}\`，契约写的是「无 ${k}」`); });
   });
   /* one benchmark shape, both ways round: same keys, and `applicable` is the only thing
      that decides whether the values are there */
@@ -6760,11 +6780,21 @@ function auditNewsChain(){
       if(cnt && cnt.textContent.replace(/\s/g,'').indexOf(String(rows.length))<0)
         bad.push(`${name} counts something other than the rows under it`);
     }
-    /* newest first, read off the rendered stamps */
-    const stamps=rows.map(rw=>{ const m=rw.innerText.match(/\b(\d{1,2}[:\/]\d{2})\b/); return m?m[1]:null; })
-                     .filter(Boolean);
-    for(let i=1;i<stamps.length;i++)
-      if(stamps[i]>stamps[i-1]){ bad.push(`${name} is not newest first: ${stamps[i-1]} then ${stamps[i]}`); break; }
+    /* ⚠️ 顺序按行自己带的 ISO 比，不按渲染出来的字符串比。
+       原来抓的是 `\d{1,2}:\d{2}`，于是拿 `00:09` 和 `13:26` 作字符串比较 ——
+       前者是 08-24 的、后者是 08-23 的，跨了一个 ET 日，比出来必然「乱序」而它没乱。
+       这正是本仓库反复踩的那一条：**需要手工对齐两个东西时，那个对齐动作本身就是 bug**。
+       两边打同一个键：行上 `data-at` 是 ISO，断言读它。
+       而「读者看不看得出来」是另一件事，单独查：每一行的可见时刻必须带日期，
+       否则 00:09 排在 13:26 上面，读者和旧断言会得出同一个错误结论。 */
+    const ats=rows.map(rw=>rw.getAttribute('data-at')).filter(Boolean);
+    if(ats.length!==rows.length) bad.push(`${name}: ${rows.length-ats.length} 行没有 data-at，顺序无从查起`);
+    for(let i=1;i<ats.length;i++)
+      if(Date.parse(ats[i])>Date.parse(ats[i-1])){
+        bad.push(`${name} is not newest first: ${ats[i-1]} then ${ats[i]}`); break; }
+    rows.forEach(rw=>{ const m=rw.innerText.match(/\d{1,2}:\d{2}/); if(!m) return;
+      if(!/\d{1,2}\s*\u6708\s*\d{1,2}|[A-Z][a-z]{2}\s+\d{1,2}/.test(rw.innerText))
+        bad.push(`${name}: 一行只印了时刻没印日期（${m[0]}）—— 这份 feed 会跨 ET 日`); });
   });
   bad.forEach(m=>console.warn('news chain:', m));
   return bad;
@@ -9086,11 +9116,16 @@ function renderNews(){
     T('nCount', feed.length, NEWS_SCANNED);
   renderEarnings(); renderFeedTabs();
   document.getElementById('news-feed').innerHTML =
-    feed.map(n=>`<div class="nrow">
+    feed.map(n=>`<div class="nrow" data-at="${n.at||''}">
         <span class="sym">${n.sym}</span>
         <span class="ttl"><a class="nlink" href="${n.url}"
           target="_blank" rel="noopener noreferrer">${n.t}</a>${dot(n.sent)}</span>
-        <span class="meta">${n.s} &#183; ${clock(n.at)}${n.after?T('nAfter'):''}</span>
+        ${/* ⚠️ 日期一律印，不做「跨日才印」。这份 feed 会同时装下两个 ET 日：
+               `2026-08-24T04:09Z` 渲染成 00:09、`2026-08-23T17:26Z` 渲染成 13:26，
+               只印时刻的话 00:09 排在 13:26 上面，看起来就是排序坏了 —— 而它是对的。
+               条件式日期在这个仓库里已被否决过一次（见 `clock` 上方注释）：
+               「没有日期」这个信号只有已经知道规则的人才读得出来。 */''}
+        <span class="meta">${n.s} &#183; ${etDate(n.at)} ${clock(n.at)}${n.after?T('nAfter'):''}</span>
       </div>`).join('') +
     `<div class="nfoot">${T('nFoot')}</div>`;
 }
