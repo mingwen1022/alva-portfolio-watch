@@ -1731,7 +1731,7 @@
 
       <div class="col-4" id="w-mk-earn"><div class="widget-card">
         <div class="p2-head"><span class="sec-ic-slot" data-sec-icon="m5"></span><h3 class="sec-title" data-t="mkEarn">Earnings this week</h3>
-          <span class="p2-src">EV4</span></div>
+          <span class="p2-src" id="mk-earn-src"></span></div>
         <div id="mk-earn"></div></div></div>
     </div>
   </div>
@@ -3696,9 +3696,22 @@ function adaptMarket(mk){
        而这里的模型只有两类，于是每天有 2–12 家在页面上凭空消失，
        日总数系统性偏低 —— 而偏低的方向恰好让「本周财报压力」看起来更轻。
        上面那句注释还写着「总数是这两半之和」，注释与 producer 分叉了。 */
-    earn:{ days:(mk.earningsWeek||[]).map(x=>
-      [x.d, (x.beforeOpen||0)+(x.afterClose||0)+(x.unknown||0),
-       x.afterClose||0, x.beforeOpen||0, x.unknown||0]) }
+    /* ⚠️ 两种形状都认：旧的是裸数组，新的是 `{asOf, days}`。
+       契约改成后者是因为这一块原来**没有自己的时刻** —— 同层四块都有，
+       只有它没有，于是页面这一格无从取时刻，而页面上唯一一个「财报时刻」
+       是 `freshness.earningsCalendar`，那属于逐标的日历，是另一份数据。
+       `asOf` 取不到就留 null，**不拿 freshness 顶替**：
+       顶替出来的时刻看起来和真的一样，而它描述的是另一次取数。 */
+    earn:(function(){ const ew = mk.earningsWeek;
+      const raw = Array.isArray(ew) ? ew : ((ew && ew.days) || []);
+      const at = (ew && !Array.isArray(ew) && ew.asOf) || null;
+      /* ⚠️ 走 utcHM，和同层四块同一个格式化器。
+         `hhmm` 出的是 ET 且不带标记，摆在一排「as of … UTC」中间，
+         同一行里两个时区、其中一个还没写出来 —— 那正是第九类。 */
+      return { asOf: at, t: utcHM(at),
+               days: raw.map(x=>
+                 [x.d, (x.beforeOpen||0)+(x.afterClose||0)+(x.unknown||0),
+                  x.afterClose||0, x.beforeOpen||0, x.unknown||0]) }; })()
   };
 }
 const CCY = { USD:{ pre:'$', dp:2 }, HKD:{ pre:'HK$', dp:2 } };
@@ -11847,6 +11860,10 @@ function renderMarket(){
      overlay. The day's total is the outer bar's height and the after-close share sits at
      the base of it, which is what the key underneath says it is. */
   const earnBox = document.getElementById('mk-earn');
+  /* 与同层四块一致：每块报自己的时刻，而不是让读者去猜整页的。
+     没有时刻就只写信号 ID —— 空着比借一个别处的时刻诚实。 */
+  document.getElementById('mk-earn-src').textContent =
+    E.t ? `EV4 \u00b7 ${T('mkAsOf', E.t)}` : 'EV4';
   if(!E.days.length){
     /* 图例解释的是柱子的颜色，脚注解释的是柱子的含义 —— 没有柱子时它们
        解释的是屏幕上不存在的东西。整组跟着内容一起不出。 */

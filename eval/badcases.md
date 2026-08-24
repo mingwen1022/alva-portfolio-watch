@@ -4,7 +4,7 @@
 
 `C-1` = 案例 C-single 第 1 次真跑 · 2026-08-23 · acct2 mmgh5 · playbook `nvda-watch`
 
-共 66 条,判官当时抓到 16 条。
+共 67 条,判官当时抓到 16 条。
 
 ---
 
@@ -1508,6 +1508,34 @@ Alert basis 那一组列         真跑 读数无日期，头上顶着 checked <
 **断言** 要补：页面上任何一组读数，其时刻必须可从产物里追到某一根 bar；同一屏出现两个时刻时两个都要印。⚠️ 现有断言查不到这一类 ——它们逐个字段比对数值，而这里每个数值都是对的。
 
 **已验** acct1 线上 v1.5.2：手工触发日线 producer 后，逐行 asOf 从 0 变 15，美股 12 只停在 08-21、加密 3 只推进到 08-23，页面显示 `readings from Aug 21–Aug 23`。DOGE 与 SOL 那两条 PV1 消失 ——用周日收完的 bar 重算后没过线，状态这才真正变成「算过了，没过线」。
+
+### BC68 · 全市场财报周历没有自己的时刻，页面上唯一的财报时刻属于另一份数据
+
+归属 **数据 + 页面** · 严重度 **中** · 判官当时 **没抓到** · 状态 **已修 · v1.5.3 已发布**
+
+```
+market.json.earningsWeek 真跑 裸数组，无 asOf             该是 `{asOf, days}`，与同层四块一致
+页面上                      Tab 3 列着 08-24–28 的周历，而页面上能查到的财报时刻停在 08-21
+```
+
+**根因** `market.json` 里 indices · treasury · commodities · crypto 四块都带 `asOf`，只有 `earningsWeek` 不带。于是这一格无从取时刻，而页面上唯一一个「财报时刻」是 `freshness.earningsCalendar` —— 那属于 **producer-context** 的**逐标的**日历，与这份 **producer-market** 每小时刷的**全市场**周历不是同一个数据集。
+
+⚠️ **是 Alva 的巡检 bot 报出来的。** 与 BC62 同形：标签的主语不是它旁边的数据。两块财报数据各有各的 producer、各有各的刷新频率，而页面只发布了其中一个的时刻。
+
+⚠️ 修的时候差点又踩第九类：第一版用 `hhmm()` 出的是 ET 且不带标记，摆在一排 `as of … UTC` 中间 —— 同一行两个时区、其中一个还没写出来。改用与同层四块同一个格式化器 `utcHM`。
+
+⚠️ 还差点留下一个更糟的：`asOf` 取不到时**不要**拿 `freshness.market` 顶替。顶替出来的时刻看起来和真的一样，而它描述的是另一次取数。取不到就不显示。
+
+**修法**
+
+- producer-market.js 落 `{asOf, days}`；契约同步，并写明为什么照 treasury 而不是 indices
+- 页面两种形状都认 —— 旧数据是裸数组，照常出柱子且**不编时刻**
+- ⚠️ 部署顺序：**先发页面再发 producer**。反过来的话线上那份页面会对新形状做 `.map`，整个 market 适配器当场崩
+- ⚠️ 第一版写了 `now.toISOString()`，而本文件没有 `now` 这个绑定（它用 `Date.now()`）——ReferenceError 会被 `feed.run()` 吞成 completed、日志为空。**冒烟测试是唯一响的地方**
+
+**断言** 要补：market.json 顶层每一块都必须带 `asOf`；页面上任何一处时刻，其来源必须与它标注的那块数据同一个 producer。
+
+**已验** acct1 v1.5.3 + 触发一次 market cron：`earningsWeek.asOf` = 03:55:25Z，拿线上那份 HTML 配线上那份数据在本地跑，Tab 3 显示 `EV4 · as of 03:55 UTC`，与商品块同刻；Tab 1 的逐标的 feed 仍是 `calendar 06:00 ET`，两者各说各的。
 
 ---
 

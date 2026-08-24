@@ -136,36 +136,39 @@
   "totalMarketCap": null,
   "btcDominance": null
  },
- "earningsWeek": [
-  {
-   "d": "2026-08-24",
-   "beforeOpen": 18,
-   "afterClose": 3,
-   "unknown": 3
-  },
-  {
-   "d": "2026-08-25",
-   "beforeOpen": 20,
-   "afterClose": 12,
-   "unknown": 4
-  },
-  {
-   "d": "2026-08-26",
-   "beforeOpen": 25,
-   "afterClose": 17,
-   "unknown": 4
-  },
-  {
-   "d": "2026-08-27",
-   "beforeOpen": 32,
-   "afterClose": 19,
-   "unknown": 2
-  },
-  {
-   "d": "2026-08-28",
-   "beforeOpen": 10,
-   "afterClose": 0,
-   "unknown": 5
-  }
- ]
+ "earningsWeek": {
+  "asOf": "2026-08-21T20:41:52Z",
+  "days": [
+   {
+    "d": "2026-08-24",
+    "beforeOpen": 18,
+    "afterClose": 3,
+    "unknown": 3
+   },
+   {
+    "d": "2026-08-25",
+    "beforeOpen": 20,
+    "afterClose": 12,
+    "unknown": 4
+   },
+   {
+    "d": "2026-08-26",
+    "beforeOpen": 25,
+    "afterClose": 17,
+    "unknown": 4
+   },
+   {
+    "d": "2026-08-27",
+    "beforeOpen": 32,
+    "afterClose": 19,
+    "unknown": 2
+   },
+   {
+    "d": "2026-08-28",
+    "beforeOpen": 10,
+    "afterClose": 0,
+    "unknown": 5
+   }
+  ]
+ }
 }

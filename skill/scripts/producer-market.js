@@ -153,7 +153,18 @@ feed.run(async (ctx, args = {}) => {
   /* ⚠️ `unknown` 那一列**永远带着**，哪怕是 0。省掉它的时候消费方就看不出
      「这天没有时间未知的」和「这份数据里没有这个概念」的区别 ——
      页面据此把总数算成 bmo+amc，每天少掉 2–12 家。字段在不在，本身就是一句话。 */
-  const earningsWeek = Object.values(byDay).sort((a, b) => a.d < b.d ? -1 : 1);
+  /* ⚠️ 这一块要带自己的 `asOf`。market.json 里 indices · treasury · commodities · crypto
+     四块全都带，只有它不带 —— 于是页面上这一格没有时刻可显示，而页面上唯一一个
+     「财报时刻」是 `freshness.earningsCalendar`，那属于 **producer-context** 的
+     逐标的日历，是另一份数据。读者看到的是 A 的数据配 B 的时间戳。
+     实测后果：Tab 3 列着 08-24–28 的周历，而能查到的时刻停在 08-21。
+     形状照 `treasury`（`{asOf, …}`）来，不照 indices（逐行 asOf）——
+     这一周是一次取回的，逐天各给一个时刻会读成「这天的数据是那时取的」。 */
+  /* ⚠️ 本文件没有 `now` 这个绑定，它用的是 `Date.now()`。
+     写成 `now.toISOString()` 是 ReferenceError，而 `feed.run()` 会把它吞掉
+     并报 completed、日志为空 —— 冒烟测试是唯一会响的地方。 */
+  const earningsWeek = { asOf: new Date().toISOString(),
+                         days: Object.values(byDay).sort((a, b) => a.d < b.d ? -1 : 1) };
 
   const market = { indices, treasury, commodities, crypto, earningsWeek };
   await wr("data/market.json", market);

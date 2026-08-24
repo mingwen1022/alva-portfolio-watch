@@ -1477,6 +1477,38 @@ CASES = [
         assertion="`auditAriaNames` 已有，够用 —— 缺的是「改完跑一遍」。",
         verified="45 条页面自检全过（此前它报 2 条）。",
     ),
+    dict(
+        id="BC68", group="copy", sev="med", owner="数据 + 页面",
+        caught=False, fixed="已修 · v1.5.3 已发布",
+        title="全市场财报周历没有自己的时刻，页面上唯一的财报时刻属于另一份数据",
+        field="market.json.earningsWeek", actual="裸数组，无 asOf",
+        expect="`{asOf, days}`，与同层四块一致",
+        onpage="Tab 3 列着 08-24–28 的周历，而页面上能查到的财报时刻停在 08-21",
+        cause="`market.json` 里 indices · treasury · commodities · crypto 四块都带 `asOf`，"
+              "只有 `earningsWeek` 不带。于是这一格无从取时刻，"
+              "而页面上唯一一个「财报时刻」是 `freshness.earningsCalendar` —— "
+              "那属于 **producer-context** 的**逐标的**日历，"
+              "与这份 **producer-market** 每小时刷的**全市场**周历不是同一个数据集。",
+        why="⚠️ **是 Alva 的巡检 bot 报出来的。** 与 BC62 同形：标签的主语不是它旁边的数据。"
+            "两块财报数据各有各的 producer、各有各的刷新频率，"
+            "而页面只发布了其中一个的时刻。\n\n"
+            "⚠️ 修的时候差点又踩第九类：第一版用 `hhmm()` 出的是 ET 且不带标记，"
+            "摆在一排 `as of … UTC` 中间 —— 同一行两个时区、其中一个还没写出来。"
+            "改用与同层四块同一个格式化器 `utcHM`。\n\n"
+            "⚠️ 还差点留下一个更糟的：`asOf` 取不到时**不要**拿 `freshness.market` 顶替。"
+            "顶替出来的时刻看起来和真的一样，而它描述的是另一次取数。取不到就不显示。",
+        fix=["producer-market.js 落 `{asOf, days}`；契约同步，并写明为什么照 treasury 而不是 indices",
+             "页面两种形状都认 —— 旧数据是裸数组，照常出柱子且**不编时刻**",
+             "⚠️ 部署顺序：**先发页面再发 producer**。反过来的话线上那份页面会对新形状做 "
+             "`.map`，整个 market 适配器当场崩",
+             "⚠️ 第一版写了 `now.toISOString()`，而本文件没有 `now` 这个绑定（它用 `Date.now()`）——"
+             "ReferenceError 会被 `feed.run()` 吞成 completed、日志为空。**冒烟测试是唯一响的地方**"],
+        assertion="要补：market.json 顶层每一块都必须带 `asOf`；"
+                  "页面上任何一处时刻，其来源必须与它标注的那块数据同一个 producer。",
+        verified="acct1 v1.5.3 + 触发一次 market cron：`earningsWeek.asOf` = 03:55:25Z，"
+                 "拿线上那份 HTML 配线上那份数据在本地跑，Tab 3 显示 `EV4 · as of 03:55 UTC`，"
+                 "与商品块同刻；Tab 1 的逐标的 feed 仍是 `calendar 06:00 ET`，两者各说各的。",
+    ),
 ]
 
 BLIND = {

@@ -1007,11 +1007,20 @@ BTC 出现过日线 z = 4.64（价格腿超阈值三倍）而 RVOL 1.88 < 3.0，
                    "changePct": 0.0044, "asOf": "…" }],
   "crypto":     { "asOf": "…", "fearGreed": 31,
                   "totalMarketCap": 3.02e12, "btcDominance": 0.440 },
-  "earningsWeek": [{ "d": "2026-08-24", "beforeOpen": 118, "afterClose": 89, "unknown": 12 }]
+  "earningsWeek": { "asOf": "…",
+                  "days": [{ "d": "2026-08-24", "beforeOpen": 118, "afterClose": 89, "unknown": 12 }] }
 }
 ```
 
-⚠️ **`earningsWeek` 三列都必填，`unknown` 是 0 也要写出来。**
+⚠️ **`earningsWeek` 带自己的 `asOf`。** 同层的 indices · treasury · commodities · crypto
+四块全都带，早先只有它不带 —— 页面这一格于是没有时刻可显示，
+而页面上唯一一个「财报时刻」是 `freshness.earningsCalendar`，那属于 producer-context
+的**逐标的**日历，与这份**全市场**周历不是同一个数据集。
+实测后果：Tab 3 列着 08-24–28，而能查到的时刻停在 08-21。**标签的主语不是它旁边的数据。**
+形状照 `treasury` 的 `{asOf, …}`，不照 indices 的逐行 asOf —— 这一周是一次取回的。
+⚠️ 旧形状（裸数组）消费方要继续认，落盘一律用新形状。
+
+⚠️ **`days[]` 三列都必填，`unknown` 是 0 也要写出来。**
 端点的 `time` 偶有空值。「盘前」与「不知道盘前还是盘后」是两件事，并进任一侧都是替它做判断。
 省掉零值那一列的后果实测过：消费方看不出「这天没有时间未知的」和
 「这份数据里没有这个概念」的区别，于是把日总数算成 `beforeOpen + afterClose`，
