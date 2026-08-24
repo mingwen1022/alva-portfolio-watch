@@ -1,0 +1,144 @@
+{
+ "asOf": "2025-10-15T16:00:00-04:00",
+ "findings": [
+  {
+   "id": "2025-10-15:GLD:PV1",
+   "symbol": "GLD",
+   "signalId": "PV1",
+   "episodeId": "2025-10-15:GLD",
+   "unit": "session",
+   "triggeredAt": "2025-10-15T16:00:00-04:00",
+   "knownAt": "2025-10-15T16:00:00-04:00",
+   "severity": "warning",
+   "priority": null,
+   "novelty": null,
+   "delivery": {
+    "level": "L2",
+    "cappedBy": "symbol_grade"
+   },
+   "assetClass": "other",
+   "measured": {
+    "z": 1.572,
+    "rvol": 1.913,
+    "move": 0.01733
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2025-10-15T16:00:00-04:00",
+    "thresholdSource": "fallback_solved",
+    "barSlot": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": null,
+    "pnl": {
+     "today": null,
+     "shares": 30,
+     "lifetime": null
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    }
+   }
+  }
+ ],
+ "scan": [
+  {
+   "symbol": "SPY",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.00444,
+    "line": 0.00852,
+    "usual": 0.00568
+   },
+   "volume": {
+    "rvol": 1.174,
+    "line": 1.75,
+    "partial": false
+   },
+   "bar": null
+  },
+  {
+   "symbol": "QQQ",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.00706,
+    "line": 0.01061,
+    "usual": 0.00708
+   },
+   "volume": {
+    "rvol": 1.379,
+    "line": 1.75,
+    "partial": false
+   },
+   "bar": null
+  },
+  {
+   "symbol": "GLD",
+   "state": "triggered",
+   "unit": "session",
+   "price": {
+    "today": 0.01733,
+    "line": 0.01378,
+    "usual": 0.00919
+   },
+   "volume": {
+    "rvol": 1.913,
+    "line": 1.75,
+    "partial": false
+   },
+   "bar": null
+  },
+  {
+   "symbol": "CHYM",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": -0.04126,
+    "line": 0.04779,
+    "usual": 0.03186
+   },
+   "volume": {
+    "rvol": 0.952,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": null
+  },
+  {
+   "symbol": "FIG",
+   "state": "insufficient_baseline",
+   "baselineDays": 54,
+   "unit": "session",
+   "price": null,
+   "volume": null,
+   "bar": null
+  },
+  {
+   "symbol": "KLAR",
+   "state": "insufficient_baseline",
+   "baselineDays": 26,
+   "unit": "session",
+   "price": null,
+   "volume": null,
+   "bar": null
+  }
+ ],
+ "scanned": {
+  "holdings": 6,
+  "newsItems": 0,
+  "newsPassed": 0
+ },
+ "gaps": []
+}

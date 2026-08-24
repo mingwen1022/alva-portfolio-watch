@@ -1,0 +1,244 @@
+<title>Portfolio Watch · Eval</title>
+<style>
+:root { --bg:#fff; --fg:#16181d; --dim:#6b7280; --line:#e5e7eb;
+        --ok:#0f7b56; --bad:#b42318; --skip:#9ca3af; }
+:root:not([data-theme="light"]) { }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#111317; --fg:#e6e8ec; --dim:#9aa1ad; --line:#272b33;
+  --ok:#4ade80; --bad:#f87171; --skip:#6b7280; } }
+:root[data-theme="dark"] { --bg:#111317; --fg:#e6e8ec; --dim:#9aa1ad; --line:#272b33;
+  --ok:#4ade80; --bad:#f87171; --skip:#6b7280; }
+body { background:var(--bg); color:var(--fg); margin:0; padding:32px 28px 64px;
+  font:14px/1.6 ui-sans-serif,-apple-system,"Segoe UI",system-ui,sans-serif; }
+h1 { font-size:19px; font-weight:500; margin:0 0 4px; }
+h2 { font-size:14px; font-weight:500; margin:32px 0 10px; }
+p.sub { color:var(--dim); margin:0 0 24px; }
+.wrap { overflow-x:auto; }
+table { border-collapse:collapse; font-size:13px; min-width:100%; }
+th,td { border-bottom:1px solid var(--line); padding:7px 12px; text-align:left;
+  white-space:nowrap; }
+thead th { color:var(--dim); font-weight:500; }
+tbody th { font-weight:500; }
+td.ok { color:var(--ok); text-align:center; }
+td.bad { color:var(--bad); text-align:center; font-weight:600; }
+td.skip,td.none { color:var(--skip); text-align:center; }
+td.n { color:var(--dim); }
+td.q,th.rd { white-space:normal; }
+th.rd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px;
+  vertical-align:top; }
+td.rd { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--dim); }
+td.q { min-width:20rem; max-width:30rem; line-height:1.45; vertical-align:top; }
+td.q .qt { color:var(--fg); }
+/* 后续行：持仓明细、用户线这些**同在一条消息里**的内容。只印第一行会让人
+   以为持仓是从账户连进来的，而有几轮恰恰在测「写进 query」那条路。 */
+td.q .qmore { color:var(--dim); font-size:11.5px; display:block; margin-top:2px; }
+td.q .nth { display:inline-block; margin-left:7px; font-size:11px;
+  padding:1px 6px; border-radius:3px; background:var(--line); color:var(--dim); }
+td.q .mode-sel { background:var(--ok); color:var(--bg); }
+td.q .ext-hit { background:var(--warn); color:var(--bg); cursor:help; }
+td.declined { color:var(--fg); background:color-mix(in srgb, var(--dim) 14%, transparent);
+  font-weight:600; }
+td.q .ext-unk { outline:1px dashed var(--line); cursor:help; }
+td.q .ts { color:var(--dim); font-size:11.5px;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+a.lnk { color:var(--fg); text-decoration:none; border-bottom:1px solid var(--line); }
+a.lnk:hover,a.lnk:focus-visible { border-bottom-color:currentColor; }
+a.lnk:focus-visible { outline:2px solid currentColor; outline-offset:3px; border-radius:2px; }
+.note { border-left:2px solid var(--line); padding:2px 0 2px 14px; color:var(--dim);
+  margin:14px 0; max-width:64ch; white-space:normal; }
+.empty { color:var(--dim); padding:14px 0; }
+</style>
+
+<h1>Portfolio Watch · Eval</h1>
+<p class="sub">2026-08-23 15:34 · 17 次真跑
+  · <a class="lnk" href="https://claude.ai/code/artifact/f4320e13-c1e3-43ba-b07f-0a260264ade3">Badcase 台账 →</a></p>
+
+<div class="note">
+不给总分。案例平均分会把「账目差 0.03」和「编造数字」折算成同一个扣分 ——
+汇总不得把失败态折叠进正常态。<br>
+矩阵里三种状态是分开的：<b>✓</b> 跑了通过 · <b>✗</b> 跑了失败 · <b>—</b> 没跑。
+把「没跑」显示成通过，是这份报告最容易骗人的地方。
+</div>
+
+<h2>案例 × 层</h2>
+<div class="wrap"><table>
+<thead><tr><th>轮次</th><th>案例 · 投的那句话</th><th>L0<br><span style="font-weight:400">结构</span></th><th>L1<br><span style="font-weight:400">白名单</span></th><th>L2<br><span style="font-weight:400">参数与账目</span></th><th>L3<br><span style="font-weight:400">跨文件自洽</span></th><th>L4<br><span style="font-weight:400">渲染</span></th><th>L5<br><span style="font-weight:400">需要判断的</span></th>
+<th>产物文件</th><th>credits</th><th>账号</th></tr></thead>
+<tbody><tr><th class="rd">R1</th><td class="q"><b>C-single</b><span class="nth mode-uns">（早于模式开关，按未指名记）</span><span class="nth ext-unk" title="这一轮没抓到 transcript，查不了">外部实现 未知</span><br><span class="qt">「盯一下 NVDA」</span><br><span class="ts">20260823-003545</span></td><td class="bad" title="[L0] NVDA spark 非空 ← 行内走势图会画成空白，看起来像上游没给数 | [L0] NVDA kline 非空 ← 二级页蜡烛图会是空的 | [L0] freshness 五个键齐 = 四个 producer 都跑过 ← 缺 news（context producer）">✗</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 1 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 3 条">✓</td><td class="bad" title="[L4] 页面加载与四个 tab 全部点过之后,零未捕获异常 ← TypeError: Cannot read properties of null (reading &#x27;toLocaleString&#x27;)  @ money2 ← lab ← rangeBar ← renderP2Blocks ← renderP2 ← renderActivePanel | [L4] 页面文本里没有 NaN / undefined / [object Object] ← 告警历史我们的判断 #sym-range 「undefined 年 NaN 月 NaN 日 – undefined 年 NaN 月 NaN 日 · 0 个交易日」 | [L4] panel-p2 每张可见的卡都有正文 ← 5 张空:measured judged reported reported reported">✗</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">23</td><td class="n">2 = 运行时长 1 + 拉数(计费端点) 1 · 归因 0 次 · 跑了 4s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R2</th><td class="q"><b>D-crypto</b><span class="nth mode-uns">（早于模式开关，按未指名记）</span><span class="nth ext-unk" title="这一轮没抓到 transcript，查不了">外部实现 未知</span><br><span class="qt">「盯下 BTC、SOL、DOGE，有异动提醒我」</span><br><span class="ts">20260823-015908</span></td><td class="bad" title="[L0] 有持仓就有 scan 读数 ← 3 只持仓，scan 里 0 只">✗</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 3 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="bad" title="[L3覆盖] scan 集合 = 持仓集合 ← 只在scan [] · 只在持仓 [&#x27;BTC&#x27;, &#x27;DOGE&#x27;, &#x27;SOL&#x27;]">✗</td><td class="bad" title="[L4] 没有 404 ← /config/alerts.json | [L4] 页面文本里没有 NaN / undefined / [object Object] ← ? #nav-ends 「NaN」 ‖ ? #nav-ends 「undefined」">✗</td><td class="bad" title="2026-08-23:BTC:PV5:05:00 ← A · 来源支撑/B · 措辞越界/C · 与数据一致 | 2026-08-23:SOL:PV5:02:00 ← A · 来源支撑/B · 措辞越界 | meta.gaps ← A · 来源支撑">✗</td><td class="n">25</td><td class="n">624 = 归因(LLM) 598 + 运行时长 16 + 拉数(计费端点) 6 + 归因(检索子条) 4 · 归因 3 次 · 跑了 182s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R3</th><td class="q"><b>C-single</b><span class="nth">第 2 次</span><span class="nth mode-uns">（早于模式开关，按未指名记）</span><span class="nth ext-unk" title="这一轮没抓到 transcript，查不了">外部实现 未知</span><br><span class="qt">「盯一下 NVDA」</span><br><span class="ts">20260823-034432</span></td><td class="bad" title="[L0] freshness 五个键齐 = 四个 producer 都跑过 ← 缺 news（context producer） · earningsCalendar（context producer） · market（market producer）">✗</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 1 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 3 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p1 有 1 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p2 有 3 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">24</td><td class="n">0</td><td class="n">mmgh5</td></tr><tr><th class="rd">R4</th><td class="q"><b>D-crypto</b><span class="nth">第 2 次</span><span class="nth mode-sel">指名了 skill</span><span class="nth ext-unk" title="这一轮没抓到 transcript，查不了">外部实现 未知</span><br><span class="qt">「盯下 BTC、SOL、DOGE，有异动提醒我」</span><br><span class="ts">20260823-041056</span></td><td class="ok" title="求值 29 条">✓</td><td class="ok" title="求值 6 条">✓</td><td class="ok" title="求值 3 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="bad" title="[L3覆盖] SOL PV5(bar) 对应粒度的 scan 应为 triggered | [L3覆盖] SOL PV5(bar) 对应粒度的 scan 应为 triggered | [L3覆盖] BTC PV5(bar) 对应粒度的 scan 应为 triggered">✗</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 2 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 2 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">25</td><td class="n">9 = 运行时长 6 + 拉数(计费端点) 3 · 归因 0 次 · 跑了 21s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R5</th><td class="q"><b>C-single</b><span class="nth">第 3 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯一下 NVDA」</span><br><span class="ts">20260823-051551</span></td><td class="bad" title="[L0] 有持仓就有 scan 读数 ← 1 只持仓，scan 里 0 只">✗</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 1 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="bad" title="[L3覆盖] scan 集合 = 持仓集合 ← 只在scan [] · 只在持仓 [&#x27;NVDA&#x27;]">✗</td><td class="ok" title="求值 12 条 | [L4] panel-p1 有 1 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">23</td><td class="n">7 = 运行时长 5 + 拉数(计费端点) 2 · 归因 0 次 · 跑了 14s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R6</th><td class="q"><b>D-crypto</b><span class="nth">第 3 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯下 BTC、SOL、DOGE，有异动提醒我」</span><br><span class="ts">20260823-053746</span></td><td class="ok" title="求值 27 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 3 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 20 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 2 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 2 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">25</td><td class="n">166 = 归因(LLM) 157 + 拉数(计费端点) 7 + 运行时长 2 · 归因 1 次 · 跑了 6s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R7</th><td class="q"><b>I-holdings</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯着这些持仓，有大事提醒我：NVDA 60 股成本 150、TSLA 25 股成本 300、AMD 15 股成本 210、BTC 0.12 个成本 68000、SOL 45 个成本 140。现金 3000 美元。」</span><br><span class="ts">20260823-054913</span></td><td class="ok" title="求值 37 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 15 条">✓</td><td class="ok" title="求值 23 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">26</td><td class="n">224 = 归因(LLM) 196 + 拉数(计费端点) 25 + 运行时长 3 · 归因 1 次 · 跑了 17s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R8</th><td class="q"><b>B-other</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯下 SPY、QQQ、GLD，还有 CHYM、FIG、KLAR 这几只新股」</span><br><span class="ts">20260823-060352</span></td><td class="ok" title="求值 41 条">✓</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 9 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 13 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 3 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">28</td><td class="n">19 = 拉数(计费端点) 12 + 运行时长 7 · 归因 0 次 · 跑了 29s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R9</th><td class="q"><b>G-hk</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯下 0700.HK」</span><br><span class="ts">20260823-061803</span></td><td class="declined" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">⊘</td><td class="skip" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">–</td><td class="skip" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">–</td><td class="skip" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">–</td><td class="skip" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">–</td><td class="skip" title="未产出 · 拒绝前跑过 6 条 alva 命令 · 理由待 L5 判
+
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。
+0700.HK（腾讯控股）暂时无法监控：Alva 行情端点返回 `stock symbol not found`。按 portfolio-watch 规则，我没有创建一个全是空数据的监控面板。
+如果可以改盯美股 OTC 代码 `TCEHY`，请确认，我再创建。">–</td><td class="n">0</td><td class="n">0</td><td class="n">mmgh5</td></tr><tr><th class="rd">R10</th><td class="q"><b>A-mixed</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯下我的持仓，有大事提醒我」</span><br><span class="ts">20260823-062402</span></td><td class="declined" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">⊘</td><td class="skip" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">–</td><td class="skip" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">–</td><td class="skip" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">–</td><td class="skip" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">–</td><td class="skip" title="未产出 · 拒绝前跑过 1 条 alva 命令 · 理由待 L5 判
+
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。
+检测到已连接的 Interactive Brokers 模拟账户，但授权已失效，需要重新连接，暂时无法读取持仓。
+请任选一种方式继续：
+1. 重新连接 IBKR 账户；或
+2. 直接发我持仓代码，例如：`NVDA、TSLA、BTC`。
+拿到持仓后，我会创建持续运行的监控看板和手机提醒。">–</td><td class="n">0</td><td class="n">0</td><td class="n">mmgh5</td></tr><tr><th class="rd">R11</th><td class="q"><b>H-probe</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「P1  盯下我的持仓，有大事提醒我        （账户未连接时投）」</span><span class="qmore">同一条消息里还写了：P2  盯下我的 NVDAA 和 TSLA P3  盯下这 40 只：&lt;40 个代号&gt;</span><br><span class="ts">20260823-062933</span></td><td class="declined" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">⊘</td><td class="skip" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">–</td><td class="skip" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">–</td><td class="skip" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">–</td><td class="skip" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">–</td><td class="skip" title="未产出 · 拒绝前跑过 0 条 alva 命令 · 理由待 L5 判
+
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连接券商账户，或者直接告诉我想监控哪些股票/加密货币代码。
+- **P2**：`NVDAA` 无法解析。你是想写 `NVDA` 吗？确认后我会和 `TSLA` 一起监控。
+- **P3（40 只）**：超过 30 个标的时，每天可能产生约 N 条提醒。要监控全部 40 只，还是只监控按持仓权重排名前 K 只？请提供具体的 40 个代码；若未连接账户，也请同时指定 K 或确认全部监控。
+以上情况均先澄清，不会擅自猜测、纠正或丢弃代码，也不会提前创建监控。
+按 `portfolio-watch` skill，这三种情况应分别响应：
+- **P1（账户未连接）**：目前没有可读取的持仓。请先连">–</td><td class="n">0</td><td class="n">0</td><td class="n">mmgh5</td></tr><tr><th class="rd">R12</th><td class="q"><b>C-single</b><span class="nth">第 4 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯一下 NVDA」</span><br><span class="ts">20260823-063612</span></td><td class="ok" title="求值 16 条">✓</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 1 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 3 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p1 有 1 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">23</td><td class="n">2 = 拉数(计费端点) 2 · 归因 0 次 · 跑了 0s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R13</th><td class="q"><b>D-crypto</b><span class="nth">第 4 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「盯下 BTC、SOL、DOGE，有异动提醒我」</span><br><span class="ts">20260823-064129</span></td><td class="ok" title="求值 27 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 3 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 20 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 2 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 2 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">26</td><td class="n">231 = 归因(LLM) 202 + 归因(检索子条) 18 + 拉数(计费端点) 10 + 运行时长 1 · 归因 1 次 · 跑了 4s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R14</th><td class="q"><b>I-holdings</b><span class="nth">第 2 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯着这些持仓，有大事提醒我：NVDA 60 股成本 150、TSLA 25 股成本 300、AMD 15 股成本 210、BTC 0.12 个成本 68000、SOL 45 个成本 140。现金 3000 美元。」</span><br><span class="ts">20260823-065123</span></td><td class="ok" title="求值 37 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 15 条">✓</td><td class="ok" title="求值 25 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">27</td><td class="n">219 = 归因(LLM) 210 + 拉数(计费端点) 9 · 归因 1 次 · 跑了 0s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R15</th><td class="q"><b>B-other</b><span class="nth">第 2 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯下 SPY、QQQ、GLD，还有 CHYM、FIG、KLAR 这几只新股」</span><br><span class="ts">20260823-072838</span></td><td class="ok" title="求值 41 条">✓</td><td class="none" title="这一层一条断言都没求值 —— 不是通过，是没查">—</td><td class="ok" title="求值 9 条 | [L2账目] 未连接账户，账目与净值曲线那一整条路没有求值">✓</td><td class="ok" title="求值 13 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 3 张卡按适用范围隐藏（不计入正文断言） | [L4] panel-p3 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">28</td><td class="n">6 = 拉数(计费端点) 6 · 归因 0 次 · 跑了 0s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R16</th><td class="q"><b>K-book9</b><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯着这些持仓，有大事提醒我。现金 3200 美元。」</span><span class="qmore">同一条消息里还写了：美股：NVDA 60 股成本 150、SOFI 400 股成本 9.2、SOUN 900 股成本 9.4、RIVN 300 股成本 22、KO 150 股成本 62 加密：BTC 0.12 个成本 68000、DOGE 52000 个成本 0.115 ETF：SPY 40 股成本 430、GLD 30 股成本 215 另外几条我自己的线：NVDA 跌到 190 就告诉我，我要止损；SOFI 涨到 22 我就了结，到了提醒我；SOUN 从…</span><br><span class="ts">20260823-140023</span></td><td class="ok" title="求值 57 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 25 条">✓</td><td class="ok" title="求值 25 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">31</td><td class="n">970 = 归因(LLM) 897 + 归因(检索子条) 56 + 拉数(计费端点) 16 + 运行时长 1 · 归因 4 次 · 跑了 7s</td><td class="n">mmgh5</td></tr><tr><th class="rd">R17</th><td class="q"><b>K-book9</b><span class="nth">第 2 次</span><span class="nth mode-sel">指名了 skill</span><br><span class="qt">「帮我盯着这些持仓，有大事提醒我。现金 3200 美元。」</span><span class="qmore">同一条消息里还写了：美股：NVDA 60 股成本 150、SOFI 400 股成本 9.2、SOUN 900 股成本 9.4、RIVN 300 股成本 22、KO 150 股成本 62 加密：BTC 0.12 个成本 68000、DOGE 52000 个成本 0.115 ETF：SPY 40 股成本 430、GLD 30 股成本 215 另外几条我自己的线：NVDA 跌到 190 就告诉我，我要止损；SOFI 涨到 22 我就了结，到了提醒我；SOUN 从…</span><br><span class="ts">20260823-142147</span></td><td class="ok" title="求值 57 条">✓</td><td class="ok" title="求值 2 条">✓</td><td class="ok" title="求值 25 条">✓</td><td class="ok" title="求值 25 条">✓</td><td class="ok" title="求值 12 条 | [L4] panel-p2 有 1 张卡按适用范围隐藏（不计入正文断言）">✓</td><td class="none" title="还没判 —— 跑 eval/l5_extract.py 抽题、派子 agent、再用 eval/l5_collect.py 收票">—</td><td class="n">41</td><td class="n">13 = 拉数(计费端点) 12 + 运行时长 1 · 归因 0 次 · 跑了 8s</td><td class="n">mpkg1</td></tr></tbody>
+</table></div>
+
+<h2>回归 · 同一个 query 再跑一次</h2>
+<div class="note">
+<b>修完不等于验过。</b>一条缺陷只有在同一个 query 重跑、原来那批断言变绿之后才算关掉 ——
+「我改了代码」和「它现在对了」是两句话。<br>
+这张表只看<b>层的状态翻转</b>；具体哪条断言变了，把鼠标停在矩阵里那一格上。<br>
+⚠️ <b>只在同一模式内比。</b>指名 skill 与不指名是两道题 —— 跨模式的两轮不产出结论，
+只标「不可比」，否则一条「✗→✓」分不清是修复生效还是换了模式。
+</div>
+<div class="wrap"><table>
+<thead><tr><th>轮次</th><th>案例</th><th>层</th><th>变化</th></tr></thead>
+<tbody><tr><td class="rd">R1→R3</td><td class="n">C-single</td><td>L4 渲染</td><td class="ok" style="text-align:left">✗ → ✓  修复生效</td></tr><tr><td class="rd">R2→R4</td><td class="n">D-crypto</td><td colspan="2" class="bad" style="text-align:left">⚠️ 模式从「（早于模式开关，按未指名记）」变成「skill-selected」—— 不可比</td></tr><tr><td class="rd">R3→R5</td><td class="n">C-single</td><td colspan="2" class="bad" style="text-align:left">⚠️ 模式从「（早于模式开关，按未指名记）」变成「skill-selected」—— 不可比</td></tr><tr><td class="rd">R4→R6</td><td class="n">D-crypto</td><td>L3 跨文件自洽</td><td class="ok" style="text-align:left">✗ → ✓  修复生效</td></tr><tr><td class="rd">R5→R12</td><td class="n">C-single</td><td>L0 结构</td><td class="ok" style="text-align:left">✗ → ✓  修复生效</td></tr><tr><td class="rd">R5→R12</td><td class="n">C-single</td><td>L3 跨文件自洽</td><td class="ok" style="text-align:left">✗ → ✓  修复生效</td></tr><tr><td class="rd">R6→R13</td><td class="n">D-crypto</td><td colspan="2" class="n">逐层结果没有变化</td></tr><tr><td class="rd">R7→R14</td><td class="n">I-holdings</td><td colspan="2" class="n">逐层结果没有变化</td></tr><tr><td class="rd">R8→R15</td><td class="n">B-other</td><td colspan="2" class="n">逐层结果没有变化</td></tr><tr><td class="rd">R16→R17</td><td class="n">K-book9</td><td colspan="2" class="n">逐层结果没有变化</td></tr></tbody></table></div>
+
+<h2>逐条缺陷</h2>
+<div class="note">
+共 19 条断言失败，全部落在 R1、R2、R3、R4、R5；其余 12 轮逐层全过。<br>
+矩阵里的 <b>✗</b> 只说哪一层挂了，<b>鼠标停在那一格上能看到当时的期望与实际</b>。
+挂的是什么、判官为什么没看见、修了没有 —— 在
+<a class="lnk" href="https://claude.ai/code/artifact/f4320e13-c1e3-43ba-b07f-0a260264ade3">Badcase 台账</a>。<br>
+那一页真正要读的是「判官当时抓到没有」这一列:缺陷会被修掉,判官的盲区不修就会一直在。
+</div>
+
+<h2>这份报告测不到什么</h2>
+<div class="note">
+<b>一个安静的案例测不到告警那几层。</b>矩阵里 <b>—</b> 不是通过 ——
+C-single 单只标的不触发时，L1 白名单一条断言都求值不了，因为那一层是对着 finding 判的。
+要覆盖它得靠会触发的案例（R2 跑了 6 条）。<b>案例的覆盖边界与缺陷是两回事，但一样要说出来。</b><br><br>
+阈值本身对不对（判据在 backtest/，eval 只判用没用对表里的数）·
+回放测不到端点变更 · 真跑测不到稳定性 · L5 三次一致只说明稳定不说明正确 ·
+组合层行为 · 港股与 A 股只覆盖措辞 · 真实券商账户需要一个多笔含空头非单一币种的账户 ·
+推送到 IM 属发布后的手工验收。
+</div>

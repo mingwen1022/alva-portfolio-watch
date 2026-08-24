@@ -1,0 +1,247 @@
+{
+ "SPY": {
+  "sigmaRobust": 0.005682,
+  "sigmaAnn": 0.1072,
+  "baselineDays": 783,
+  "usable": true,
+  "m23": {
+   "rho": 0.1575,
+   "n": 692,
+   "verdict": "pass"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 1.75,
+   "source": "fallback_solved",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": {
+    "price": 0.00852,
+    "volume": 1.75
+   },
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 15,
+   "PV5": null,
+   "windowSessions": 783,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {
+   "PV1": {
+    "maxDelivery": "L2",
+    "verdict": "unvalidated_class"
+   }
+  },
+  "degraded": null,
+  "distribution": {
+   "p50": 0.00546,
+   "p95": 0.01968,
+   "p99": 0.0315
+  }
+ },
+ "QQQ": {
+  "sigmaRobust": 0.007076,
+  "sigmaAnn": 0.1383,
+  "baselineDays": 783,
+  "usable": true,
+  "m23": {
+   "rho": 0.1691,
+   "n": 692,
+   "verdict": "pass"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 1.75,
+   "source": "fallback_solved",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": {
+    "price": 0.01061,
+    "volume": 1.75
+   },
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 15,
+   "PV5": null,
+   "windowSessions": 783,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {
+   "PV1": {
+    "maxDelivery": "L2",
+    "verdict": "unvalidated_class"
+   }
+  },
+  "degraded": null,
+  "distribution": {
+   "p50": 0.00739,
+   "p95": 0.02625,
+   "p99": 0.04074
+  }
+ },
+ "GLD": {
+  "sigmaRobust": 0.009187,
+  "sigmaAnn": 0.1505,
+  "baselineDays": 783,
+  "usable": true,
+  "m23": {
+   "rho": 0.172,
+   "n": 692,
+   "verdict": "pass"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 1.75,
+   "source": "fallback_solved",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": {
+    "price": 0.01378,
+    "volume": 1.75
+   },
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 51,
+   "PV5": null,
+   "windowSessions": 783,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {
+   "PV1": {
+    "maxDelivery": "L2",
+    "verdict": "unvalidated_class"
+   }
+  },
+  "degraded": null,
+  "distribution": {
+   "p50": 0.00571,
+   "p95": 0.01969,
+   "p99": 0.03039
+  }
+ },
+ "CHYM": {
+  "sigmaRobust": 0.031863,
+  "sigmaAnn": 0.5945,
+  "baselineDays": 87,
+  "usable": true,
+  "m23": {
+   "rho": null,
+   "n": 0,
+   "verdict": "insufficient_sample"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 2.0,
+   "source": "validated",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": {
+    "price": 0.04779,
+    "volume": 2.0
+   },
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 0,
+   "PV5": null,
+   "windowSessions": 87,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {},
+  "degraded": null,
+  "distribution": {
+   "p50": 0.02408,
+   "p95": 0.07348,
+   "p99": 0.14678
+  }
+ },
+ "FIG": {
+  "sigmaRobust": null,
+  "sigmaAnn": null,
+  "baselineDays": 54,
+  "usable": false,
+  "m23": {
+   "rho": null,
+   "n": 0,
+   "verdict": "insufficient_sample"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 2.0,
+   "source": "validated",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": null,
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 0,
+   "PV5": null,
+   "windowSessions": 54,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {},
+  "degraded": "short_baseline"
+ },
+ "KLAR": {
+  "sigmaRobust": null,
+  "sigmaAnn": null,
+  "baselineDays": 26,
+  "usable": false,
+  "m23": {
+   "rho": null,
+   "n": 0,
+   "verdict": "insufficient_sample"
+  },
+  "thresholds": {
+   "theta_z": 1.5,
+   "theta_v": 2.0,
+   "source": "validated",
+   "theta_z_bar": null,
+   "theta_v_bar": null
+  },
+  "triggerLine": {
+   "session": null,
+   "bar": null
+  },
+  "historicalTriggers": {
+   "PV1": 0,
+   "PV5": null,
+   "windowSessions": 26,
+   "last7": {
+    "PV1": 0,
+    "PV5": null
+   }
+  },
+  "signalGrades": {},
+  "degraded": "short_baseline"
+ }
+}

@@ -1,0 +1,13 @@
+{
+ "specVersion": "2026-08-22",
+ "generatedAt": "2025-10-15T16:00:00-04:00",
+ "nextRun": null,
+ "freshness": {
+  "prices": "2025-10-15T16:00:00-04:00"
+ },
+ "gaps": [
+  "unvalidated_asset_class:3,2.0",
+  "insufficient_baseline:CHYM,FIG,KLAR",
+  "no_intraday_for_this_book"
+ ]
+}

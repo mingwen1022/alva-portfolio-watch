@@ -1,0 +1,1 @@
+{"asOf": "2026-08-21T16:00:00-04:00", "findings": [], "scan": [{"symbol": "NVDA", "state": "quiet", "unit": "session", "asOf": "2026-08-21", "price": {"today": -0.00982, "line": 0.03837, "usual": 0.02558}, "volume": {"rvol": 0.689, "line": 2, "partial": false}}], "scanned": {"holdings": 1, "newsItems": 0, "newsPassed": 0}, "gaps": []}

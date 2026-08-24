@@ -1,0 +1,28 @@
+{
+ "specVersion": "2026-08-21",
+ "generatedAt": "2026-08-21T20:05:00-04:00",
+ "nextRun": "2026-08-21T20:35:00-04:00",
+ "freshness": {
+  "prices": "2026-08-21T20:00:00-04:00",
+  "news": "2026-08-21T16:03:00-04:00",
+  "earningsCalendar": "2026-08-21T06:00:00-04:00",
+  "market": "2026-08-21T21:00:00Z",
+  "intraday": "2026-08-21T20:00:00-04:00"
+ },
+ "gaps": [
+  "earnings_next_out_of_calendar_window",
+  "attribution_no_chain_sample",
+  "pv1_highvol_downgrade_undecided",
+  "nav_series_backcast"
+ ],
+ "producedSignals": [
+  "PV1",
+  "PV5",
+  "EV1",
+  "EV4",
+  "DR1",
+  "US1",
+  "US2",
+  "US3"
+ ]
+}

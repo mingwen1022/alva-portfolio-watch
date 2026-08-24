@@ -1,0 +1,33 @@
+{
+ "asOf": "2026-08-04T16:00:00-04:00",
+ "keys": {
+  "SOUN:US3": {
+   "on": true,
+   "since": "2025-10-17T16:00:00-04:00",
+   "lastPush": "2025-10-17T16:00:00-04:00",
+   "clearedAt": null,
+   "armedFor": -0.2
+  },
+  "AMD:US2": {
+   "on": true,
+   "since": "2026-07-30T16:00:00-04:00",
+   "lastPush": "2026-07-30T16:00:00-04:00",
+   "clearedAt": null,
+   "armedFor": 450.0
+  },
+  "MSTR:US1": {
+   "on": true,
+   "since": "2026-06-16T16:00:00-04:00",
+   "lastPush": "2026-06-16T16:00:00-04:00",
+   "clearedAt": null,
+   "armedFor": 125.0
+  },
+  "NVDA:US3": {
+   "on": false,
+   "since": null,
+   "lastPush": "2026-07-24T16:00:00-04:00",
+   "clearedAt": "2026-08-04T16:00:00-04:00",
+   "armedFor": -0.12
+  }
+ }
+}

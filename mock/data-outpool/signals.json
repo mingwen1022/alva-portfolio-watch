@@ -1,0 +1,183 @@
+{
+ "generatedFrom": "signal-spec.md",
+ "signals": {
+  "PV1": {
+   "name": {
+    "zh": "价量异动 · 日线",
+    "en": "Price-volume move · daily"
+   },
+   "type": "alert",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "green",
+   "severity": "critical",
+   "maxDelivery": "L1",
+   "pushable": true
+  },
+  "PV5": {
+   "name": {
+    "zh": "价量异动 · 盘中 15 分钟",
+    "en": "Price-volume move · 15-min"
+   },
+   "type": "alert",
+   "assetClass": [
+    "us_equity",
+    "crypto"
+   ],
+   "granularity": "bar",
+   "evidence": "green",
+   "severity": "critical",
+   "maxDelivery": "L1",
+   "pushable": true
+  },
+  "PV3": {
+   "name": {
+    "zh": "幅度标注",
+    "en": "Size marker"
+   },
+   "type": "display",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": null,
+   "maxDelivery": "L3",
+   "pushable": false
+  },
+  "PV4": {
+   "name": {
+    "zh": "覆盖标注",
+    "en": "Coverage marker"
+   },
+   "type": "display",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": null,
+   "maxDelivery": "L3",
+   "pushable": false
+  },
+  "EV1": {
+   "name": {
+    "zh": "内部人簇买",
+    "en": "Insider cluster buy"
+   },
+   "type": "record",
+   "assetClass": [
+    "us_equity"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": null,
+   "maxDelivery": "L3",
+   "pushable": false
+  },
+  "EV4": {
+   "name": {
+    "zh": "财报日历",
+    "en": "Earnings calendar"
+   },
+   "type": "calendar",
+   "assetClass": [
+    "us_equity"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": "informational",
+   "maxDelivery": "L3",
+   "pushable": false
+  },
+  "EV6": {
+   "name": {
+    "zh": "公司新闻",
+    "en": "Company news"
+   },
+   "type": "attribution",
+   "assetClass": [
+    "us_equity"
+   ],
+   "granularity": "daily",
+   "evidence": "yellow",
+   "severity": null,
+   "maxDelivery": "L3",
+   "pushable": false
+  },
+  "DR1": {
+   "name": {
+    "zh": "费率极端",
+    "en": "Funding extremes"
+   },
+   "type": "display",
+   "assetClass": [
+    "crypto"
+   ],
+   "granularity": "daily",
+   "evidence": "amber",
+   "severity": null,
+   "maxDelivery": "L2",
+   "pushable": false
+  },
+  "US1": {
+   "name": {
+    "zh": "止损线",
+    "en": "Stop line"
+   },
+   "type": "alert",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": "warning",
+   "maxDelivery": "L1",
+   "pushable": true
+  },
+  "US2": {
+   "name": {
+    "zh": "止盈线",
+    "en": "Take-profit line"
+   },
+   "type": "alert",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": "warning",
+   "maxDelivery": "L1",
+   "pushable": true
+  },
+  "US3": {
+   "name": {
+    "zh": "回撤线",
+    "en": "Drawdown line"
+   },
+   "type": "alert",
+   "assetClass": [
+    "us_equity",
+    "crypto",
+    "other"
+   ],
+   "granularity": "daily",
+   "evidence": "na",
+   "severity": "warning",
+   "maxDelivery": "L1",
+   "pushable": true
+  }
+ }
+}

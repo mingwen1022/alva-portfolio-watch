@@ -1,0 +1,171 @@
+{
+ "indices": [
+  {
+   "symbol": "SPX",
+   "name": "S&P 500",
+   "price": 7674.37,
+   "changePct": 0.00113,
+   "asOf": "2026-08-21T20:41:52Z",
+   "change": 8.69
+  },
+  {
+   "symbol": "NDX",
+   "name": "Nasdaq Composite",
+   "price": 26180.45,
+   "changePct": -0.0007,
+   "asOf": "2026-08-21T21:15:59Z",
+   "change": -18.38
+  },
+  {
+   "symbol": "DJI",
+   "name": "Dow Jones",
+   "price": 53277.01,
+   "changePct": 0.00963,
+   "asOf": "2026-08-21T20:41:57Z",
+   "change": 508.14
+  },
+  {
+   "symbol": "VIX",
+   "name": "Volatility index",
+   "price": 15.13,
+   "changePct": -0.0436,
+   "asOf": "2026-08-21T20:14:46Z",
+   "change": -0.69
+  }
+ ],
+ "treasury": {
+  "asOf": "2026-08-21",
+  "curve": [
+   {
+    "tenor": "1M",
+    "yield": 0.038
+   },
+   {
+    "tenor": "2M",
+    "yield": 0.038
+   },
+   {
+    "tenor": "3M",
+    "yield": 0.0388
+   },
+   {
+    "tenor": "6M",
+    "yield": 0.0395
+   },
+   {
+    "tenor": "1Y",
+    "yield": 0.0403
+   },
+   {
+    "tenor": "2Y",
+    "yield": 0.0424
+   },
+   {
+    "tenor": "3Y",
+    "yield": 0.0431
+   },
+   {
+    "tenor": "5Y",
+    "yield": 0.0443
+   },
+   {
+    "tenor": "7Y",
+    "yield": 0.045700000000000005
+   },
+   {
+    "tenor": "10Y",
+    "yield": 0.047400000000000005
+   },
+   {
+    "tenor": "20Y",
+    "yield": 0.0525
+   },
+   {
+    "tenor": "30Y",
+    "yield": 0.0527
+   }
+  ],
+  "spread2y10y": 50
+ },
+ "commodities": [
+  {
+   "symbol": "GCUSD",
+   "name": "Gold",
+   "price": 4680.6,
+   "changePct": 0.02263,
+   "asOf": "2026-08-21T21:00:00Z",
+   "change": 103.6
+  },
+  {
+   "symbol": "SIUSD",
+   "name": "Silver",
+   "price": 69.53,
+   "changePct": 0.01816,
+   "asOf": "2026-08-21T21:00:01Z",
+   "change": 1.24
+  },
+  {
+   "symbol": "CLUSD",
+   "name": "Crude oil",
+   "price": 87.06,
+   "changePct": 0.00916,
+   "asOf": "2026-08-21T21:00:01Z",
+   "change": 0.79
+  },
+  {
+   "symbol": "NGUSD",
+   "name": "Natural gas",
+   "price": 2.773,
+   "changePct": 0.00362,
+   "asOf": "2026-08-21T21:00:03Z",
+   "change": 0.01
+  },
+  {
+   "symbol": "HGUSD",
+   "name": "Copper",
+   "price": 6.587,
+   "changePct": 0.01659,
+   "asOf": "2026-08-21T21:00:01Z",
+   "change": 0.1075
+  }
+ ],
+ "crypto": {
+  "asOf": "2026-08-21T00:00:00Z",
+  "fearGreed": 72,
+  "btcMarketCap": 1465481761246.85,
+  "totalMarketCap": null,
+  "btcDominance": null
+ },
+ "earningsWeek": [
+  {
+   "d": "2026-08-24",
+   "beforeOpen": 18,
+   "afterClose": 3,
+   "unknown": 3
+  },
+  {
+   "d": "2026-08-25",
+   "beforeOpen": 20,
+   "afterClose": 12,
+   "unknown": 4
+  },
+  {
+   "d": "2026-08-26",
+   "beforeOpen": 25,
+   "afterClose": 17,
+   "unknown": 4
+  },
+  {
+   "d": "2026-08-27",
+   "beforeOpen": 32,
+   "afterClose": 19,
+   "unknown": 2
+  },
+  {
+   "d": "2026-08-28",
+   "beforeOpen": 10,
+   "afterClose": 0,
+   "unknown": 5
+  }
+ ]
+}

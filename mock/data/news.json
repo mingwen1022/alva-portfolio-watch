@@ -1,0 +1,178 @@
+{
+ "asOf": "2026-08-21T20:00:00-04:00",
+ "chain": "wide",
+ "minRelevance": 0.8,
+ "items": [
+  {
+   "title": "Tesla Controls 59% of the U.S. EV Market -- Its Highest Share Since 2023",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/tesla-controls-59-u-ev-222500240.html",
+   "publishedAt": "2026-08-21T22:25:00-00:00",
+   "source": "Yahoo Finance",
+   "summary": "Tesla's U.S. EV market share has increased to 59%, a level not seen since 2023, despite a 25% stock drop this year. While the company's revenue grew, profitability decreased due to significant investments in AI, Optimus, and robotaxis, leading to negative free cash flow. This creates volatility for ",
+   "sentiment": 0.35,
+   "sentimentLabel": "Somewhat-Bullish",
+   "relevance": 1.0,
+   "symbol": "TSLA",
+   "symbols": [
+    "TSLA"
+   ]
+  },
+  {
+   "title": "AMD (NASDAQ: AMD) CTO sells 28,811 shares, gifts 25,052",
+   "url": "https://www.stocktitan.net/sec-filings/AMD/form-4-advanced-micro-devices-inc-insider-trading-activity-df04e34a661d.html",
+   "publishedAt": "2026-08-21T22:16:05-00:00",
+   "source": "Stock Titan",
+   "summary": "Advanced Micro Devices (AMD) CTO Mark D. Papermaster recently sold 28,811 shares of common stock through open-market transactions, ranging from $466.23 to $475.26 per share, under a Rule 10b5-1 trading plan. Additionally, he made a bona fide gift of 25,052 shares of AMD Common Stock. Following these",
+   "sentiment": -0.35,
+   "sentimentLabel": "Somewhat-Bearish",
+   "relevance": 1.0,
+   "symbol": "AMD",
+   "symbols": [
+    "AMD"
+   ]
+  },
+  {
+   "title": "Advanced Micro Devices CTO Mark Papermaster disposes of $13.6 million in shares",
+   "url": "https://www.investing.com/news/insider-trading-news/advanced-micro-devices-cto-mark-papermaster-disposes-of-136-million-in-shares-93CH-4872202",
+   "publishedAt": "2026-08-21T22:07:04-00:00",
+   "source": "Investing.com",
+   "summary": "Mark Papermaster, CTO of Advanced Micro Devices (AMD), sold 28,811 shares worth $13.6 million on August 20, 2026, under a Rule 10b5-1 trading plan. This transaction occurred as AMD's stock is up 189% over the past year but is considered overvalued by InvestingPro. Following these sales and a gift tr",
+   "sentiment": 0.0,
+   "sentimentLabel": "Neutral",
+   "relevance": 1.0,
+   "symbol": "AMD",
+   "symbols": [
+    "AMD"
+   ]
+  },
+  {
+   "title": "NVIDIA Corporation (NVDA) & Advanced Micro Devices (AMD): Nvidia Might Ship AI Chips With Less Memory. AMD Says It’s Not Worried",
+   "url": "https://ca.finance.yahoo.com/news/nvidia-corporation-nvda-advanced-micro-204025825.html",
+   "publishedAt": "2026-08-21T21:07:12-00:00",
+   "source": "Yahoo! Finance Canada",
+   "summary": "NVIDIA is reportedly considering shipping its next-generation Rubin Ultra GPU with less high-bandwidth memory than initially promised, potentially as low as 192GB to 256GB, due to a severe industry-wide memory shortage. Meanwhile, its rival Advanced Micro Devices (AMD) is proceeding with its Helios ",
+   "sentiment": 0.35,
+   "sentimentLabel": "Somewhat-Bullish",
+   "relevance": 0.923995,
+   "symbol": "NVDA",
+   "symbols": [
+    "NVDA",
+    "AMD"
+   ]
+  },
+  {
+   "title": "Nvidia Reportedly Strikes $7B Licensing And Investment Deal With AI Startup Poolside — NVDA Stock Ends Week 5% Lower",
+   "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-reportedly-strikes-7b-licensing-205155931.html",
+   "publishedAt": "2026-08-21T20:51:53-00:00",
+   "source": "Yahoo Finance",
+   "summary": "Nvidia has reportedly secured a $7 billion deal with AI startup Poolside, involving $6 billion to license AI models and $1 billion in direct investment, valuing Poolside at $12 billion. The agreement also includes offering employment to over 100 Poolside workers and aims to promote open-source AI an",
+   "sentiment": 0.0,
+   "sentimentLabel": "Neutral",
+   "relevance": 1.0,
+   "symbol": "NVDA",
+   "symbols": [
+    "NVDA"
+   ]
+  },
+  {
+   "title": "NVIDIA Corporation (NVDA) & Advanced Micro Devices (AMD): Nvidia Might Ship AI Chips With Less Memory. AMD Says It’s Not Worried",
+   "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-corporation-nvda-advanced-micro-204025825.html",
+   "publishedAt": "2026-08-21T20:37:08-00:00",
+   "source": "Yahoo Finance",
+   "summary": "Nvidia is reportedly considering shipping its next-generation Rubin Ultra GPU with less memory than initially promised, potentially as low as 192GB to 256GB, due to a severe industry-wide memory shortage. Meanwhile, its rival AMD is confident about its Helios AI system, which is set to ship with suf",
+   "sentiment": 0.0,
+   "sentimentLabel": "Neutral",
+   "relevance": 0.969792,
+   "symbol": "NVDA",
+   "symbols": [
+    "NVDA",
+    "AMD"
+   ]
+  },
+  {
+   "title": "Tesla recalls nearly 3 million vehicles over safety risks",
+   "url": "https://uk.finance.yahoo.com/news/tesla-recalls-nearly-3-million-200232678.html",
+   "publishedAt": "2026-08-21T20:02:22-00:00",
+   "source": "Yahoo Finance UK",
+   "summary": "Tesla is recalling nearly 3 million vehicles in China due to safety concerns related to hidden door handles, which could prevent quick escape or rescue in emergencies. This recall is part of a larger action affecting over 4 million cars, including those from Chinese automakers, ahead of a 2027 ban o",
+   "sentiment": -0.7,
+   "sentimentLabel": "Bearish",
+   "relevance": 1.0,
+   "symbol": "TSLA",
+   "symbols": [
+    "TSLA"
+   ]
+  },
+  {
+   "title": "Advanced Micro Devices vs. Arm Holdings: Comparing Revenue Trends Between These Artificial Intelligence Companies",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/advanced-micro-devices-vs-arm-200141974.html",
+   "publishedAt": "2026-08-21T20:02:05-00:00",
+   "source": "Yahoo Finance",
+   "summary": "This article compares the revenue trends of Advanced Micro Devices (AMD) and Arm Holdings (ARM), both key players in the artificial intelligence sector. AMD is shown to have consistently upward revenue growth, driven by strong demand for its AI chips, with impressive year-over-year sales increases. ",
+   "sentiment": 0.35,
+   "sentimentLabel": "Somewhat-Bullish",
+   "relevance": 0.974257,
+   "symbol": "AMD",
+   "symbols": [
+    "AMD"
+   ]
+  },
+  {
+   "title": "Advanced Micro Devices (AMD) Posts Record Sales, But Musk’s NVIDIA (NVDA) Pledge Sinks the Stock",
+   "url": "https://ca.finance.yahoo.com/news/advanced-micro-devices-amd-posts-194827905.html",
+   "publishedAt": "2026-08-21T19:48:00-00:00",
+   "source": "Yahoo! Finance Canada",
+   "summary": "Advanced Micro Devices (AMD) reported record sales and a strong beat, yet its stock fell over 8% due to Elon Musk's announcement that SpaceX would exclusively use NVIDIA (NVDA) chips moving forward. Despite AMD's impressive financial performance, including record processor sales and new deals with m",
+   "sentiment": 0.0,
+   "sentimentLabel": "Neutral",
+   "relevance": 0.922878,
+   "symbol": "NVDA",
+   "symbols": [
+    "NVDA",
+    "AMD"
+   ]
+  },
+  {
+   "title": "Space Exploration Technologies (SPCX) vs. NVIDIA Corporation (NVDA): SpaceX Beats on Revenue, But AI Spending Steals the Show",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/space-exploration-technologies-spcx-vs-191030423.html",
+   "publishedAt": "2026-08-21T19:10:53-00:00",
+   "source": "Yahoo Finance",
+   "summary": "Space Exploration Technologies (SPCX) exceeded revenue estimates in its first earnings report since its IPO, but its stock fell due to unexpectedly high capital expenditures, particularly in AI. NVIDIA Corporation (NVDA) shares, however, rose after SpaceX pledged to exclusively use Nvidia chips for ",
+   "sentiment": 0.35,
+   "sentimentLabel": "Somewhat-Bullish",
+   "relevance": 0.9631,
+   "symbol": "NVDA",
+   "symbols": [
+    "NVDA"
+   ]
+  },
+  {
+   "title": "Tesla leads China’s record vehicle recall over door safety (TSLA:NASDAQ)",
+   "url": "https://seekingalpha.com/news/4635978-tesla-leads-chinas-record-vehicle-recall-over-door-safety",
+   "publishedAt": "2026-08-21T19:09:35-00:00",
+   "source": "Seeking Alpha",
+   "summary": "China has initiated its largest-ever vehicle recall, affecting nearly 4.3 million vehicles, with Tesla among 11 manufacturers involved. The recall addresses safety issues related to emergency access to vehicle doors. This move underscores the increasing regulatory scrutiny on electronic systems as a",
+   "sentiment": -0.7,
+   "sentimentLabel": "Bearish",
+   "relevance": 1.0,
+   "symbol": "TSLA",
+   "symbols": [
+    "TSLA"
+   ]
+  },
+  {
+   "title": "Tesla Jumps 3.6% as Semi Launch and Robotaxi Expansion Accelerate",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/tesla-jumps-3-6-semi-182220329.html",
+   "publishedAt": "2026-08-21T18:22:00-00:00",
+   "source": "Yahoo Finance",
+   "summary": "Tesla's stock jumped 3.6% on Friday as the company moves closer to the commercial launch of its Semi truck and expands its robotaxi efforts in Las Vegas. These two initiatives are seen as significant growth drivers for the electric-vehicle giant, following a strong second quarter with record deliver",
+   "sentiment": 0.35,
+   "sentimentLabel": "Somewhat-Bullish",
+   "relevance": 1.0,
+   "symbol": "TSLA",
+   "symbols": [
+    "TSLA"
+   ]
+  }
+ ]
+}

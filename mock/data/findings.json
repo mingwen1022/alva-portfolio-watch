@@ -1,0 +1,919 @@
+{
+ "asOf": "2026-08-21T20:00:00-04:00",
+ "findings": [
+  {
+   "id": "2026-08-21:BTC:PV5:08:45",
+   "symbol": "BTC",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T08:45:00Z",
+   "knownAt": "2026-08-21T08:45:00Z",
+   "episodeId": "2026-08-21:BTC",
+   "novelty": 1.0,
+   "priority": 0.1782,
+   "measured": {
+    "z": 21.15,
+    "rvol": 21.37,
+    "move": 0.02074
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T08:45:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "08:45",
+    "barClose": 79258.03
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 1,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 637.51,
+     "shares": 0.12,
+     "lifetime": 1240.56
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:BTC:PV5:09:00",
+   "symbol": "BTC",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T09:00:00Z",
+   "knownAt": "2026-08-21T09:00:00Z",
+   "episodeId": "2026-08-21:BTC",
+   "novelty": 1.0,
+   "priority": 0.1782,
+   "measured": {
+    "z": -20.5,
+    "rvol": 18.19,
+    "move": -0.01734
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T09:00:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "09:00",
+    "barClose": 77883.87
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 1,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 637.51,
+     "shares": 0.12,
+     "lifetime": 1240.56
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:DOGE:PV5:09:00",
+   "symbol": "DOGE",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T09:00:00Z",
+   "knownAt": "2026-08-21T09:00:00Z",
+   "episodeId": "2026-08-21:DOGE",
+   "novelty": 1.0,
+   "priority": 0.0903,
+   "measured": {
+    "z": -14.62,
+    "rvol": 27.74,
+    "move": -0.02592
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T09:00:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "09:00",
+    "barClose": 0.08344
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 1,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 576.16,
+     "shares": 52000,
+     "lifetime": -1219.4
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:SOL:PV5:09:00",
+   "symbol": "SOL",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T09:00:00Z",
+   "knownAt": "2026-08-21T09:00:00Z",
+   "episodeId": "2026-08-21:SOL",
+   "novelty": 1.0,
+   "priority": 0.0798,
+   "measured": {
+    "z": -10.18,
+    "rvol": 21.05,
+    "move": -0.02037
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T09:00:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "09:00",
+    "barClose": 91.39
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 1,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 272.7,
+     "shares": 45,
+     "lifetime": -2082.6
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:AMD:US2",
+   "symbol": "AMD",
+   "assetClass": "us_equity",
+   "signalId": "US2",
+   "unit": "session",
+   "severity": "warning",
+   "triggeredAt": "2026-08-21T11:05:00-04:00",
+   "knownAt": "2026-08-21T11:05:00-04:00",
+   "episodeId": "2026-08-21:AMD",
+   "novelty": 0.0,
+   "priority": 0.0,
+   "measured": {
+    "z": null,
+    "rvol": null,
+    "move": 0.00808
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2026-08-21T11:05:00-04:00",
+    "thresholdSource": "user_set",
+    "barSlot": null,
+    "userLine": {
+     "kind": "US2",
+     "value": 450.0,
+     "actual": 473.25
+    }
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": "SPY",
+     "benchmarkMove": 0.00409,
+     "symbolMove": 0.00808,
+     "applicable": true
+    },
+    "sizeRank": null,
+    "pnl": {
+     "today": 56.9,
+     "shares": 15,
+     "lifetime": 3948.75
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:MSTR:US1",
+   "symbol": "MSTR",
+   "assetClass": "us_equity",
+   "signalId": "US1",
+   "unit": "session",
+   "severity": "warning",
+   "triggeredAt": "2026-08-21T14:22:00-04:00",
+   "knownAt": "2026-08-21T14:22:00-04:00",
+   "episodeId": "2026-08-21:MSTR",
+   "novelty": 0.0,
+   "priority": 0.0,
+   "measured": {
+    "z": null,
+    "rvol": null,
+    "move": 0.06104
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2026-08-21T14:22:00-04:00",
+    "thresholdSource": "user_set",
+    "barSlot": null,
+    "userLine": {
+     "kind": "US1",
+     "value": 125.0,
+     "actual": 119.25
+    }
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": "SPY",
+     "benchmarkMove": 0.00409,
+     "symbolMove": 0.06104,
+     "applicable": true
+    },
+    "sizeRank": null,
+    "pnl": {
+     "today": 274.41,
+     "shares": 40,
+     "lifetime": -2430.0
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:SOUN:US3",
+   "symbol": "SOUN",
+   "assetClass": "us_equity",
+   "signalId": "US3",
+   "unit": "session",
+   "severity": "warning",
+   "triggeredAt": "2026-08-21T16:00:00-04:00",
+   "knownAt": "2026-08-21T16:00:00-04:00",
+   "episodeId": "2026-08-21:SOUN",
+   "novelty": 0.0,
+   "priority": 0.0,
+   "measured": {
+    "z": null,
+    "rvol": null,
+    "move": 0.05022
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2026-08-21T16:00:00-04:00",
+    "thresholdSource": "user_set",
+    "barSlot": null,
+    "userLine": {
+     "kind": "US3",
+     "value": -0.2,
+     "actual": -0.6979
+    }
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": "SPY",
+     "benchmarkMove": 0.00409,
+     "symbolMove": 0.05022,
+     "applicable": true
+    },
+    "sizeRank": null,
+    "pnl": {
+     "today": 315.03,
+     "shares": 900,
+     "lifetime": -1872.0
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:DOGE:PV1",
+   "symbol": "DOGE",
+   "signalId": "PV1",
+   "episodeId": "2026-08-21:DOGE",
+   "unit": "session",
+   "triggeredAt": "2026-08-21T20:00:00-04:00",
+   "knownAt": "2026-08-21T20:00:00-04:00",
+   "severity": "critical",
+   "priority": 0.0903,
+   "novelty": 1.0,
+   "measured": {
+    "z": 9.243,
+    "rvol": 4.416,
+    "move": 0.13769
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2026-08-21T20:00:00-04:00",
+    "thresholdSource": "validated",
+    "barSlot": null
+   },
+   "context": {
+    "sizeRank": {
+     "rank": 4,
+     "of": 502,
+     "unit": "sessions"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "pnl": {
+     "today": 576.16,
+     "shares": 52000,
+     "lifetime": -1219.4
+    }
+   },
+   "assetClass": "crypto",
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   }
+  },
+  {
+   "id": "2026-08-21:SOL:PV1",
+   "symbol": "SOL",
+   "signalId": "PV1",
+   "episodeId": "2026-08-21:SOL",
+   "unit": "session",
+   "triggeredAt": "2026-08-21T20:00:00-04:00",
+   "knownAt": "2026-08-21T20:00:00-04:00",
+   "severity": "critical",
+   "priority": 0.0798,
+   "novelty": 1.0,
+   "measured": {
+    "z": 3.299,
+    "rvol": 3.26,
+    "move": 0.06913
+   },
+   "trigger": {
+    "unit": "session",
+    "moveAt": "2026-08-21T20:00:00-04:00",
+    "thresholdSource": "validated",
+    "barSlot": null
+   },
+   "context": {
+    "sizeRank": {
+     "rank": 18,
+     "of": 502,
+     "unit": "sessions"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "pnl": {
+     "today": 272.7,
+     "shares": 45,
+     "lifetime": -2082.6
+    }
+   },
+   "assetClass": "crypto",
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   }
+  },
+  {
+   "id": "2026-08-21:DOGE:PV5:20:30",
+   "symbol": "DOGE",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T20:30:00Z",
+   "knownAt": "2026-08-21T20:30:00Z",
+   "episodeId": "2026-08-21:DOGE",
+   "novelty": 1.0,
+   "priority": 0.0903,
+   "measured": {
+    "z": 11.15,
+    "rvol": 21.8,
+    "move": 0.0144
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T20:30:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "20:30",
+    "barClose": 0.08666
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 2,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 576.16,
+     "shares": 52000,
+     "lifetime": -1219.4
+    }
+   }
+  },
+  {
+   "id": "2026-08-21:DOGE:PV5:21:30",
+   "symbol": "DOGE",
+   "assetClass": "crypto",
+   "signalId": "PV5",
+   "unit": "bar",
+   "severity": "critical",
+   "triggeredAt": "2026-08-21T21:30:00Z",
+   "knownAt": "2026-08-21T21:30:00Z",
+   "episodeId": "2026-08-21:DOGE",
+   "novelty": 1.0,
+   "priority": 0.0903,
+   "measured": {
+    "z": 18.63,
+    "rvol": 19.5,
+    "move": 0.03285
+   },
+   "trigger": {
+    "unit": "bar",
+    "moveAt": "2026-08-21T21:30:00Z",
+    "thresholdSource": "validated",
+    "barSlot": "21:30",
+    "barClose": 0.09086
+   },
+   "delivery": {
+    "level": "L1",
+    "cappedBy": null
+   },
+   "context": {
+    "benchmark": {
+     "symbol": null,
+     "benchmarkMove": null,
+     "symbolMove": null,
+     "applicable": false
+    },
+    "sizeRank": {
+     "rank": 1,
+     "of": 135,
+     "unit": "bars"
+    },
+    "attribution": {
+     "timing": "none",
+     "summary": null,
+     "sources": [],
+     "model": null,
+     "generatedAt": null
+    },
+    "pnl": {
+     "today": 576.16,
+     "shares": 52000,
+     "lifetime": -1219.4
+    }
+   }
+  }
+ ],
+ "scan": [
+  {
+   "symbol": "NVDA",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": -0.00982,
+    "line": 0.03837,
+    "usual": 0.02558
+   },
+   "volume": {
+    "rvol": 0.689,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 1.33,
+    "rvol": 0.6,
+    "slot": "15:00",
+    "line": 0.01329,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "TSLA",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.05137,
+    "line": 0.04137,
+    "usual": 0.02758
+   },
+   "volume": {
+    "rvol": 1.308,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 3.47,
+    "rvol": 1.54,
+    "slot": "15:30",
+    "line": 0.01701,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "AMD",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.00808,
+    "line": 0.08166,
+    "usual": 0.05444
+   },
+   "volume": {
+    "rvol": 0.508,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": -1.09,
+    "rvol": 0.5,
+    "slot": "14:00",
+    "line": 0.05304,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "MSTR",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.06104,
+    "line": 0.08344,
+    "usual": 0.05563
+   },
+   "volume": {
+    "rvol": 2.631,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": -2.37,
+    "rvol": 2.89,
+    "slot": "18:30",
+    "line": 0.02359,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "SOUN",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.05022,
+    "line": 0.06684,
+    "usual": 0.04456
+   },
+   "volume": {
+    "rvol": 1.007,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 2.08,
+    "rvol": 0.74,
+    "slot": "14:45",
+    "line": 0.03097,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "RIVN",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.05996,
+    "line": 0.05367,
+    "usual": 0.03578
+   },
+   "volume": {
+    "rvol": 1.311,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 3.75,
+    "rvol": 4.18,
+    "slot": "15:30",
+    "line": 0.02076,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "SOFI",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.05525,
+    "line": 0.05299,
+    "usual": 0.03532
+   },
+   "volume": {
+    "rvol": 0.881,
+    "line": 2.0,
+    "partial": false
+   },
+   "bar": {
+    "z": -3.28,
+    "rvol": 0.76,
+    "slot": "16:00",
+    "line": 0.01567,
+    "volumeLine": 2.0,
+    "bars": 25,
+    "state": "quiet"
+   }
+  },
+  {
+   "symbol": "BTC",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.07275,
+    "line": 0.02279,
+    "usual": 0.01519
+   },
+   "volume": {
+    "rvol": 2.737,
+    "line": 3.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 21.15,
+    "rvol": 21.37,
+    "slot": "08:45",
+    "line": 0.00982,
+    "volumeLine": 3.0,
+    "bars": 96,
+    "state": "triggered"
+   }
+  },
+  {
+   "symbol": "SOL",
+   "state": "triggered",
+   "unit": "session",
+   "price": {
+    "today": 0.06913,
+    "line": 0.03234,
+    "usual": 0.02156
+   },
+   "volume": {
+    "rvol": 3.26,
+    "line": 3.0,
+    "partial": false
+   },
+   "bar": {
+    "z": -10.18,
+    "rvol": 21.05,
+    "slot": "09:00",
+    "line": 0.02013,
+    "volumeLine": 3.0,
+    "bars": 96,
+    "state": "triggered"
+   }
+  },
+  {
+   "symbol": "DOGE",
+   "state": "triggered",
+   "unit": "session",
+   "price": {
+    "today": 0.13769,
+    "line": 0.0226,
+    "usual": 0.01506
+   },
+   "volume": {
+    "rvol": 4.416,
+    "line": 3.0,
+    "partial": false
+   },
+   "bar": {
+    "z": 18.63,
+    "rvol": 19.5,
+    "slot": "21:30",
+    "line": 0.01778,
+    "volumeLine": 3.0,
+    "bars": 96,
+    "state": "triggered"
+   }
+  },
+  {
+   "symbol": "SPY",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.00409,
+    "line": 0.01183,
+    "usual": 0.00789
+   },
+   "volume": {
+    "rvol": 0.83,
+    "line": 1.75,
+    "partial": false
+   }
+  },
+  {
+   "symbol": "QQQ",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.00353,
+    "line": 0.02248,
+    "usual": 0.01499
+   },
+   "volume": {
+    "rvol": 0.83,
+    "line": 1.75,
+    "partial": false
+   }
+  },
+  {
+   "symbol": "GLD",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": 0.01951,
+    "line": 0.02226,
+    "usual": 0.01484
+   },
+   "volume": {
+    "rvol": 2.148,
+    "line": 1.75,
+    "partial": false
+   }
+  },
+  {
+   "symbol": "TLT",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": -0.00352,
+    "line": 0.00908,
+    "usual": 0.00605
+   },
+   "volume": {
+    "rvol": 0.977,
+    "line": 1.75,
+    "partial": false
+   }
+  },
+  {
+   "symbol": "XLE",
+   "state": "quiet",
+   "unit": "session",
+   "price": {
+    "today": -0.00173,
+    "line": 0.01962,
+    "usual": 0.01308
+   },
+   "volume": {
+    "rvol": 0.832,
+    "line": 1.75,
+    "partial": false
+   }
+  }
+ ],
+ "scanned": {
+  "holdings": 15,
+  "newsItems": 35,
+  "newsPassed": 32
+ }
+}
