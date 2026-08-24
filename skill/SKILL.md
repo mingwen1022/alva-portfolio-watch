@@ -569,7 +569,7 @@ stay apart.
 | Cronjob | Frequency | Signals | Why this frequency |
 |---|---|---|---|
 | Intraday | every 15 minutes | PV5 · US user lines | that is the granularity of an intraday signal, and a crossing must be timely |
-| Daily | once after the close | PV1 · US user lines · baseline increment | they judge a whole trading day |
+| Daily | **`10 0 * * *`**, every day | PV1 · US user lines · baseline increment | they judge a whole trading day, and see below for why every day |
 | Pre-market | **once, weekdays, pre-market** | EV4 earnings calendar · EV1 insider | EV4's copy says "reports after tomorrow's close" — a post-close job cannot produce that on the day |
 | Market | hourly | tab 3 reference data | the macro endpoints are hourly at best, and none of this feeds a threshold |
 
@@ -586,6 +586,30 @@ Upload them as they are. **They take no editing, but they do take arguments** �
 
 **Frequency is set by when the signal's data changes, not by how often we want to look.**
 Funding rates settle every 8 hours; fetching every 15 minutes returns the same value.
+
+### The daily job runs every day, and after 00:00 UTC
+
+Two mistakes are easy here and neither one errors.
+
+**Do not restrict the daily job to weekdays.** `* * 1-5` is the natural choice for a stock
+book and it is wrong the moment the book holds one token: crypto has a bar every calendar
+day, so Saturday's and Sunday's never get scanned. The symptom is not an error. The page
+keeps showing the readings from Friday under a header timestamped today, and a reader who
+sees no alert concludes the latest data was measured and did not qualify — when it was
+never measured at all.
+
+**Do not schedule it before 00:00 UTC.** A crypto daily bar for UTC day D closes at
+`D+1 00:00 UTC`. A job at 22:30 UTC reads that day's bar with 90 minutes still to run, so
+its volume is short of a full day and RVOL is biased low: crypto systematically
+under-triggers, silently. `10 0 * * *` is after the crypto close, and it is 20:10 ET the
+previous day, four hours after the US close. One expression, both calendars, both bars
+complete.
+
+A US name simply returns its last session on days it does not trade, so running on a
+weekend costs one fetch and changes nothing for it. That is why one job is enough: the
+schedule is not claiming the two calendars are the same, only that this instant is after
+the close in both. Each scan row carries its own `asOf`, so the two dates stay
+distinguishable downstream.
 
 ### Before you move on, count them
 
