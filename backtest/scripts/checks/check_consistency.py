@@ -574,3 +574,60 @@ if _drift:
     raise SystemExit(1)
 print(f'✅ 信号目录与 spec 逐条一致（{len(_cat_rows)} 条，豁免 {len(_EXEMPT)}：'
       + '; '.join(f'{k} {v}' for k, v in _EXEMPT.items()) + '）')
+
+# ---- 台账条数与引用它的文档 ----
+# ⚠️ BC43 就是这一类：台账页面声称 41 条、实际只渲染了 34 条。
+#    条数是个会变的事实，而它被抄在四份文档里。抄一次就多一处会过期的副本。
+#    这里不检查「渲染对不对」（那是 badcases.py 自己的事），
+#    只检查**引用它的地方有没有跟着动**。
+import ast as _ast, glob as _glob
+_bcp = os.path.join(os.path.dirname(__file__), '../../../eval/build/badcases.py')
+if not os.path.exists(_bcp):
+    print('—  台账条数检查跳过：缺 eval/build/badcases.py')
+else:
+    _src = open(_bcp, encoding='utf-8').read()
+    _tree = _ast.parse(_src)
+    _cases = None
+    for _n in _tree.body:
+        if isinstance(_n, _ast.Assign) and any(
+                getattr(t, 'id', None) == 'CASES' for t in _n.targets):
+            _cases = _n.value
+    if _cases is None:
+        raise SystemExit('❌ badcases.py 里解析不出 CASES —— 读不到就是没查')
+    _total = len(_cases.elts)
+    # caught=False 才算「判官当时漏了」；None 是「不判对错」，不能混进来。
+    _missed = 0
+    for _e in _cases.elts:
+        for _kw in getattr(_e, 'keywords', []):
+            if _kw.arg == 'caught' and isinstance(_kw.value, _ast.Constant) \
+                    and _kw.value.value is False:
+                _missed += 1
+    _root = os.path.join(os.path.dirname(__file__), '../../..')
+    _stale, _hits = [], {'总数': 0, '漏数': 0}
+    for _f in ['APPROACH.md', 'README.md', 'eval/README.md', 'PortfolioWatch_解题思路.md']:
+        _p = os.path.join(_root, _f)
+        if not os.path.exists(_p): continue
+        _t = open(_p, encoding='utf-8').read()
+        # 只看紧贴「条」且语境是台账/缺陷/badcase 的数字，避免撞上别处的计数
+        for _m in re.finditer(r'(\d+)\s*条(?=\s*(?:badcase|缺陷|：))', _t):
+            _hits['总数'] += 1
+            if int(_m.group(1)) != _total:
+                _stale.append(f'{_f} 写「{_m.group(1)} 条」，台账实际 {_total} 条')
+        for _m in re.finditer(r'判官当时漏了\s*(\d+)\s*条', _t):
+            _hits['漏数'] += 1
+            if int(_m.group(1)) != _missed:
+                _stale.append(f'{_f} 写「漏了 {_m.group(1)} 条」，实际 {_missed} 条')
+    if _stale:
+        print('❌ 台账条数与文档不一致：'); [print('  ', d) for d in _stale]
+        raise SystemExit(1)
+    # ⚠️ 必须报出比了几处。破坏性测试第一次没响就是因为这个：
+    #    APPROACH.md 只在交付仓库，工作仓库里「漏数」那半个检查**没有比较对象**，
+    #    于是无论台账怎么变它都通过 —— 「跑完没发现」和「没东西可查」长得一模一样。
+    _cover = ' · '.join(f'{k} {v} 处' for k, v in _hits.items())
+    if not any(_hits.values()):
+        print(f'—  台账 {_total} 条 · 判官漏 {_missed} 条，'
+              f'但**本仓库没有任何文档引用这两个数**，这一项等于没查')
+    else:
+        _none = [k for k, v in _hits.items() if not v]
+        print(f'✅ 台账 {_total} 条 · 判官漏 {_missed} 条，引用处都对得上（{_cover}）'
+              + (f' ⚠️ {"、".join(_none)}在本仓库无人引用，那一半没查' if _none else ''))
