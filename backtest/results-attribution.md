@@ -9,6 +9,44 @@
 
 ---
 
+### 为什么不是 alpi · 2026-08-24 实测
+
+平台有一种 feed 的 agent 类型叫 `alpi`，调研阶段曾把语义类判断（「这条新闻和上次是不是
+同一件事」）定位给它（见 `research/alert-methodology.md`）。**最终没有用它，归因走的是
+脚本里直接调 `ask()`。** 这条选型依据此前没有落盘，2026-08-24 建一个一次性探针补测，
+用完即删（cronjob · feed · ALFS 文件全部清理）。
+
+结论：**`agent_type: "alpi"` 被接受、被校验，然后没有下文。**
+
+| 排除项 | 证据 |
+|---|---|
+| 参数没传出去 | CLI 源码里 `POST /api/v1/release/feed` 的 body 明确带 `agent_type` |
+| `alpi` 不是合法值 | 传 `notarealagenttype` 返回 `INVALID_ARGUMENT: unknown agent_type`；传 `alpi` 通过。服务端认识它，且这一步的校验排在 cronjob 校验之前 |
+| 少了一步客户端操作 | CLI 里 `flow_id` / `flow_config_path` 只有读没有写，没有任何创建 flow 的命令 —— flow 应由服务端在注册时自动建 |
+
+实际观测到的是：feed 建成（200），而 `flow_id` 与 `flow_config_path` 均为 null，
+`~/feeds/<name>/` 下没有 `AGENTS.md`（CLI 自己的说明写着 agent feed 应当有这个可编辑提示词）。
+改用产品面的 `PATCH /api/v1/automation/{id}` 显式再设一次 `agent_type`，同样 200，flow 依然为空。
+触发运行时执行的是普通 V8 沙箱脚本，没有任何 agent 介入。
+
+⚠️ **区分不了两种原因**：alpi 的 flow 服务未启用（暂时性），还是 provisioning 走网页端等
+另一入口（CLI 这条路本来就只写字段）。两者对本项目的取舍没有影响 ——
+运行期需要的是一个能稳定跑通的调用，而这条路当天不通。
+
+**下次复查用这个判据，不必再建资源：**
+
+```bash
+alva automation inspect --id <feed_id>
+#   flow id: (none)   → 只写了个字段，alpi 没接上
+#   flow id: <非空>    → 真的接上了
+```
+
+⚠️ 这与 PO 族的结论不冲突，两者管的是不同的事：PO 族证明的是**模型不能进判定路径**
+（同一输入三次重复出现 2:1 分歧）；alpi 这条只说明**这条链路当天不可用**。
+即便它通了，也只能落在解释与展示，不能落在「是否构成告警」。
+
+---
+
 ### 首轮实测 · 2026-08-21
 
 样本取真实的 PV1 触发日：**AAPL 2026-07-31**，收益 −7.35% · z −5.56 · 量比 3.11 ·

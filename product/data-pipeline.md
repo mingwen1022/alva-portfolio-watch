@@ -6,6 +6,7 @@
 > registry 回答「信号是什么」，本文回答「怎么把它算出来」。两者分工不重叠。
 >
 > **全链路有两处 LLM，都在 §零 画出。** 运行期只有一处：告警富化②的归因（`ask()`）。
+> 不走平台的 `alpi` agent feed —— 实测该链路不通（`agent_type` 被接受但服务端不建 flow），依据见 [`../backtest/results-attribution.md`](../backtest/results-attribution.md)「为什么不是 alpi」。
 > 另一处是 PO 族的内容提取（M18），但 **PO 族未进已定案 13 条**，其流水线已移出本文 ——
 > 见 `../backtest/results-po.md`。本文只画运行期实际会跑的那条。
 
