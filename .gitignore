@@ -6,3 +6,4 @@ node_modules/
 dist/
 pipeline/raw/
 backtest/data/
+node_modules

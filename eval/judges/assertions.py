@@ -369,7 +369,7 @@ def run(book, full=True):
 # ⚠️ `full` 说的是「这本账该不该有全部八个文件」。
 #    outpool 是为几只特定标的做的**局部** fixture，缺 series/news/market 是设计如此；
 #    真跑抓回来的产物一律 full=True。不区分的话，要么放过真缺失，要么天天报假失败。
-# ⚠️ 下游（eval/report.py）曾经靠 grep 这个脚本的中文输出来分层，
+# ⚠️ 下游（eval/build/report.py）曾经靠 grep 这个脚本的中文输出来分层，
 #    判层用的是 `"L1" in line` —— 「L1-L3 未跑」这一行会同时命中 L1 和 L3，
 #    而措辞一改，分层就静默失效。层归属由这里给，不由下游猜。
 JSON = '--json' in sys.argv

@@ -351,7 +351,8 @@ if _r.returncode: raise SystemExit('❌ 提示词混入中文')
 _r = _sp.run(['python3', os.path.join(os.path.dirname(__file__), 'check_js_parity.py')],
              capture_output=True, text=True)
 print(_r.stdout.rstrip() or _r.stderr.rstrip()[:400])
-if _r.returncode: raise SystemExit('❌ 口径不一致')
+# 退出码 2 = 缺原始数据，跳过；1 = 真的不一致。两者不能都算失败，也不能都算通过。
+if _r.returncode not in (0, 2): raise SystemExit('❌ 口径不一致')
 
 # ---- 平台设计门禁 ----
 # ⚠️ `alva lint playbook` 是**发布时真的会拦**的那道门，不是建议。

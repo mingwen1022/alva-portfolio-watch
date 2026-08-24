@@ -599,6 +599,7 @@
    "symbol": "NVDA",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": -0.00982,
     "line": 0.03837,
@@ -623,6 +624,7 @@
    "symbol": "TSLA",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.05137,
     "line": 0.04137,
@@ -647,6 +649,7 @@
    "symbol": "AMD",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.00808,
     "line": 0.08166,
@@ -671,6 +674,7 @@
    "symbol": "MSTR",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.06104,
     "line": 0.08344,
@@ -695,6 +699,7 @@
    "symbol": "SOUN",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.05022,
     "line": 0.06684,
@@ -719,6 +724,7 @@
    "symbol": "RIVN",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.05996,
     "line": 0.05367,
@@ -743,6 +749,7 @@
    "symbol": "SOFI",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.05525,
     "line": 0.05299,
@@ -767,6 +774,7 @@
    "symbol": "BTC",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.07275,
     "line": 0.02279,
@@ -791,6 +799,7 @@
    "symbol": "SOL",
    "state": "triggered",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.06913,
     "line": 0.03234,
@@ -815,6 +824,7 @@
    "symbol": "DOGE",
    "state": "triggered",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.13769,
     "line": 0.0226,
@@ -839,6 +849,7 @@
    "symbol": "SPY",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.00409,
     "line": 0.01183,
@@ -854,6 +865,7 @@
    "symbol": "QQQ",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.00353,
     "line": 0.02248,
@@ -869,6 +881,7 @@
    "symbol": "GLD",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": 0.01951,
     "line": 0.02226,
@@ -884,6 +897,7 @@
    "symbol": "TLT",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": -0.00352,
     "line": 0.00908,
@@ -899,6 +913,7 @@
    "symbol": "XLE",
    "state": "quiet",
    "unit": "session",
+   "asOf": "2026-08-21",
    "price": {
     "today": -0.00173,
     "line": 0.01962,

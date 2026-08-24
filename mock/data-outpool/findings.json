@@ -10,8 +10,8 @@
    "triggeredAt": "2025-10-15T16:00:00-04:00",
    "knownAt": "2025-10-15T16:00:00-04:00",
    "severity": "warning",
-   "priority": null,
-   "novelty": null,
+   "priority": 0.2724,
+   "novelty": 1.0,
    "delivery": {
     "level": "L2",
     "cappedBy": "symbol_grade"
@@ -37,9 +37,9 @@
     },
     "sizeRank": null,
     "pnl": {
-     "today": null,
+     "today": 197.97,
      "shares": 30,
-     "lifetime": null
+     "lifetime": 5171.7
     },
     "attribution": {
      "timing": "none",

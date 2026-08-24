@@ -224,6 +224,12 @@ for s in ALL:
     x=S[s]
     scan.append({"symbol":s,"state":"triggered" if x["fired"] else ("insufficient_baseline" if not x["usable"] else "quiet"),
       "unit":"session",
+      # ⚠️ 这一行的读数来自哪一根 bar，不是这一轮的时刻（契约 §findings.scan）。
+      # 混合账本在周末有两个「最近收盘」：美股停在周五，加密每天都有。
+      # 顶层 ASOF 是 max()，用它给每一行贴标签，等于把周五的读数说成周日的。
+      # producer.js 一直写这个字段，本文件漏了 —— 于是 mock 从来没走过逐行那条路，
+      # 页面的回退分支把差异盖住了，看起来两边一致。
+      "asOf":x["d"][-1],
       "price":{"today":round(x["today"],5),"line":round(THETA_Z*x["sigma"],5),"usual":round(x["sigma"],5)},
       "volume":{"rvol":round(x["rvol"],3),"line":x["tv"],"partial":False}})
     if x["fired"]:
@@ -236,9 +242,11 @@ for s in ALL:
                      "thresholdSource":("fallback_solved" if x["cls"]=="other" else "validated"),"barSlot":None},
           "context":{"sizeRank":{"rank":x["rank"],"of":x["nrank"]},
             "attribution":{"timing":"none","summary":None,"sources":[],"model":None,"generatedAt":None}}})
+# 跨日时如实记 gap，与 producer.js 同一个键；页面的 gapSpan 文案读它。
+_span=sorted({S[s]["d"][-1] for s in ALL})
 findings={"asOf":ASOF_TS,"findings":fnd,"scan":scan,
   "scanned":{"holdings":len(S),"newsItems":0,"newsPassed":0},
-  "gaps":[]}
+  "gaps":(["holdings_span_multiple_sessions:"+",".join(_span)] if len(_span)>1 else [])}
 
 def merge(old, new):
     """逐层合并。⚠️ build.py 只拥有自己算的那些字段 ——

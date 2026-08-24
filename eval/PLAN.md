@@ -135,8 +135,8 @@ J5  跑完之后 cronjob 是不是四条、cron 表达式对不对  盘前那条
 | L1 白名单 | `signalId ⊆ signals.json`（**13 条齐**）· 证据等级不越界 | 脚本 | fail |
 | L2 参数 | 已验证类别阈值逐字等于 spec；`other` 是 `fallback_solved` 且可复算 | 脚本 + 复算 | fail |
 | L2 账目 | 三条恒等式，容限 0.02 | 脚本 | fail |
-| L3 自洽 | 覆盖 · 量纲 · 同源 · 归因四档 · 状态机 · 三道投递上限 | `eval/assertions.py` · `test_state.py` | fail |
-| L4 渲染 | 零未捕获异常 · 无 NaN/undefined · 卡片有正文 · 页面数字对得上契约 | `eval/l4_render.js`（无头浏览器） | fail |
+| L3 自洽 | 覆盖 · 量纲 · 同源 · 归因四档 · 状态机 · 三道投递上限 | `eval/judges/assertions.py` · `test_state.py` | fail |
+| L4 渲染 | 零未捕获异常 · 无 NaN/undefined · 卡片有正文 · 页面数字对得上契约 | `eval/judges/l4_render.js`（无头浏览器） | fail |
 | L5 判断 | 需要判断的:有没有幻觉 · 相不相关 · 说得对不对 | 子 agent ×3，**三个角度** | 任一角度 fail = fail |
 
 **三条通则：**
@@ -309,8 +309,8 @@ L5 判官  卡数 × 3 × 约 208，默认关
 
 | 已有 | 在 eval 里的角色 |
 |---|---|
-| `eval/assertions.py` | L0–L3，可指向任意产物目录（`--json` 给下游机器读）|
-| `eval/l4_render.js` | L4 渲染层，无头浏览器跑一遍产物 |
+| `eval/judges/assertions.py` | L0–L3，可指向任意产物目录（`--json` 给下游机器读）|
+| `eval/judges/l4_render.js` | L4 渲染层，无头浏览器跑一遍产物 |
 | `check_schema_drift.py` | L0 字段必须在 `data-contract` 有出处 |
 | `check_disclaimer.py` | L4 免责声明按句式检测 |
 | `check_skill_refs.py` | 包内引用有效 |

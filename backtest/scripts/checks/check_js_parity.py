@@ -10,7 +10,16 @@
 import json, os, subprocess, statistics as st, tempfile, sys
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../..')
-RAW  = json.load(open(os.path.join(ROOT, 'pipeline/raw/daily.json')))['daily']
+_RAWP = os.path.join(ROOT, 'pipeline/raw/daily.json')
+# ⚠️ 原始数据按设计不进 git（54 MB，含第三方帖子全文）。缺它时干净跳过，
+#    退出码 2 与「失败」的 1 区分开 —— 交付仓库里跑这条命令曾经直接
+#    FileNotFoundError 崩掉，而 README 正让评审跑它。
+#    「没跑到」必须和「跑完没发现」长得不一样，崩溃和通过都不是它。
+if not os.path.exists(_RAWP):
+    print('—  Python/JS 口径检查跳过：缺 pipeline/raw/daily.json（原始数据不进仓库，'
+          '按 backtest/data-sources.md 重取后可跑）')
+    sys.exit(2)
+RAW  = json.load(open(_RAWP))['daily']
 LIB  = os.path.join(ROOT, 'skill/scripts/lib.js')
 W    = 90
 TOL  = 1e-12          # 同一套浮点运算，允许的只有表示误差

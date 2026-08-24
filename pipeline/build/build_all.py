@@ -11,6 +11,14 @@
 """
 import subprocess, sys, os, time
 HERE = os.path.dirname(os.path.abspath(__file__))
+# ⚠️ 各阶段脚本用的是相对仓库根的路径（`mock/data/…`），所以 cwd 必须是仓库根。
+#    本文件从 pipeline/ 移到 pipeline/build/ 之后，dirname(HERE) 少了一层，
+#    cwd 变成 pipeline/，六个阶段当场 FileNotFoundError。
+#    改成按标记文件找根，再移动目录也不会错。
+ROOT = HERE
+while ROOT != os.path.dirname(ROOT) and not os.path.isdir(os.path.join(ROOT, "mock", "data")):
+    ROOT = os.path.dirname(ROOT)
+assert os.path.isdir(os.path.join(ROOT, "mock", "data")), "找不到仓库根（mock/data）"
 
 STAGES = [
     ("build_signals.py",      "信号目录 signals.json —— 原来是手写的，加资产类别时不会跟着动"),
@@ -32,7 +40,7 @@ def main():
         if not os.path.exists(p):
             print(f"❌ 缺 {script}"); fail.append(script); continue
         t0 = time.time()
-        r = subprocess.run([sys.executable, p], capture_output=True, text=True, cwd=os.path.dirname(HERE))
+        r = subprocess.run([sys.executable, p], capture_output=True, text=True, cwd=ROOT)
         ms = int((time.time() - t0) * 1000)
         if r.returncode:
             print(f"❌ {script:26s} {what}\n{r.stdout[-800:]}{r.stderr[-800:]}")
@@ -41,7 +49,7 @@ def main():
             print(f"✅ {script:26s} {ms:5d}ms  {what}")
     if fail:
         print(f"\n❌ {len(fail)} 个阶段失败：{fail}"); sys.exit(1)
-    print("\n跑一致性检查确认产物：python3 backtest/scripts/check_consistency.py")
+    print("\n跑一致性检查确认产物：python3 backtest/scripts/checks/check_consistency.py")
 
 if __name__ == "__main__":
     main()

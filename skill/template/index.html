@@ -496,6 +496,9 @@
   /* the same glyph the alert card wears, at row scale, in the family's own colour */
   .tbl .c-fired{ --tbl-align:center; white-space:nowrap; }
   .row-fired{ display:inline-flex; align-items:center; cursor:pointer; }
+  /* 时刻跟在分组名后面，比列名轻一档：它描述这一组，不是这一组的一员 */
+  .grp-when{ font-style:normal; font-weight:400; font-size:11.5px;
+    color:var(--grey-g3); margin-left:10px; letter-spacing:.01em; white-space:nowrap; }
   .row-fired:focus-visible{ outline:2px solid var(--main-m2); outline-offset:2px;
     border-radius:3px; }
   .sym-ic{ width:20px; height:20px; border-radius:5px; flex:none; color:#fff;
@@ -614,10 +617,15 @@
   .p2-list .ins-sell{ color:var(--main-m4); }
   /* an evidence cap, not a warning: the rule ran, its thresholds were solved rather
      than validated, so the card must not wear the mark that belongs to tested ones */
-  /* 与兜底标记同一种字形，只换颜色：两者都是「这只票的规则有个附加条件」，
-     但一个讲线从哪来，一个讲告警到不到手机。 */
-  .cap-mark{ background:rgba(230,169,26,.14) !important; color:#8a6410 !important;
-    border-color:rgba(230,169,26,.28) !important; text-transform:none; letter-spacing:0; }
+  /* ⚠️ 这里原来是一枚写着 NO PUSH · INTRADAY 的黄色徽标。十五行里七行都挂着它，
+     一眼看过去像产品坏了 —— 而它说的是「这条规则在这只标的上还没验够」，
+     一句关于**证据**的话，被字号和颜色说成了一句关于**故障**的话。
+     改成图标左侧一颗点：在场、可点、不喊；范围与理由全部在浮窗里。
+     ⚠️ 尺寸固定 6px 并 flex-shrink:0 —— 它在 flex 行里，
+        不给固定尺寸的话窄列会把它压扁成一条线。 */
+  .cap-dot{ width:6px; height:6px; flex:0 0 6px; border-radius:50%; cursor:help;
+    background:var(--main-m5); opacity:.62; margin-right:-1px; }
+  .cap-dot:hover,.cap-dot:focus-visible{ opacity:1; }
   .fb-mark{ font-size:10px; letter-spacing:.3px; text-transform:uppercase;
     color:var(--main-m5); border:1px solid var(--main-m5-10); background:var(--main-m5-10);
     border-radius:3px; padding:1px 5px; cursor:help; white-space:nowrap; }
@@ -2143,18 +2151,22 @@ const COPY = {
      卡片上更没有那个切换 —— 一枚光秃秃的 no push 说不清是日线还是盘中。 */
   capScope:{ session:'daily', bar:'intraday', line:'your line', all:'price-volume' },
   capMarkS:x=>`no push \u00b7 ${x}`,
+  /* 每个点都要有自己的名字。屏幕阅读器按名字列出控件，
+     五个都叫「no push · intraday」时那张列表等于没有 —— 它读不出这是哪一只。
+     位置是视力读者免费拿到的信息，名字是替代它的唯一渠道。 */
+  capMarkRow:(sym,x)=>`${sym}: no push \u00b7 ${x}`,
   capTipAll:['Neither price-volume rule can reach your phone on this symbol \u2014 not the daily one, not the 15-minute one.',
     'Lines you set yourself are not affected: those are your instruction, not our judgement, and they still ring.',
     'Open the symbol tab to see which grade capped each rule.'],
-  capTipNone:['This symbol was never graded for that rule, so its alerts cannot reach your phone.',
+  capTipNone:x=>[`This symbol's **${x}** rule was never graded, so its alerts cannot reach your phone.`,
     'A missing grade is not a pass \u2014 it means nobody measured whether the rule works here, and we fail closed.',
     'Re-running initialization is what fills it in.'],
-  capTip:['This symbol\u2019s price-volume alerts stay on the page. Your phone will not ring for them.',
+  capTip:x=>[`This symbol's **${x}** alerts stay on the page. Your phone will not ring for them.`,
           'Re-running the rule over this symbol\u2019s entire record, the five sessions after a trigger are not reliably more volatile than an ordinary five \u2014 the 95% interval reaches below 1.0, so \u201cno different from normal\u201d cannot be ruled out.',
           'The rule still runs and the alert still appears here. Open the symbol for the numbers behind this.'],
   capTipOther:['This alert stays on the page. Your phone will not ring for it.',
           'What holds it back is named on the card \u2014 open it for the reason and the numbers.'],
-  capTipThin:['This symbol\u2019s price-volume alerts stay on the page. Your phone will not ring for them.',
+  capTipThin:x=>[`This symbol's **${x}** alerts stay on the page. Your phone will not ring for them.`,
           'Its record has not yet produced the five independent episodes needed to judge whether a trigger means anything here. This is \u201cnot assessed yet\u201d, not \u201cno effect\u201d \u2014 it can change as history accumulates.',
           'The rule still runs and the alert still appears here. Open the symbol for the numbers behind this.'],
   /* The ceiling is a standing property of the symbol, so it is stated here rather than
@@ -2448,6 +2460,8 @@ const COPY = {
   hVol:'30d vol',
   hDD:'From high',
   hCost:'Cost', hFired:'Fired',
+  basisFrom:when=>`readings from ${when}`,
+  basisFiredOn:when=>` \u00b7 ${when}`,
   hFiredTip:'Both legs crossed their lines on this row, so an alert was raised. The mark opens that alert. It reads the record of what fired, not the two bars beside it — those are the evidence, this is the conclusion.',
   /* the rule alone repeats down the column; a screen reader needs the row it is on,
      which is the one thing a sighted reader gets from position */
@@ -2762,18 +2776,19 @@ const COPY = {
   capMark:'\u4e0d\u63a8\u624b\u673a',
   capScope:{ session:'\u65e5\u7ebf', bar:'\u76d8\u4e2d', line:'\u4f60\u7684\u7ebf', all:'\u4ef7\u91cf\u544a\u8b66' },
   capMarkS:x=>`\u4e0d\u63a8\u624b\u673a \u00b7 ${x}`,
+  capMarkRow:(sym,x)=>`${sym}\uff1a\u4e0d\u63a8\u624b\u673a \u00b7 ${x}`,
   capTipAll:['\u8fd9\u53ea\u6807\u7684\u4e0a\u4e24\u6761\u4ef7\u91cf\u89c4\u5219\u90fd\u5230\u4e0d\u4e86\u624b\u673a \u2014\u2014 \u65e5\u7ebf\u4e0d\u884c\uff0c15 \u5206\u949f\u7684\u4e5f\u4e0d\u884c\u3002',
     '\u4f60\u81ea\u5df1\u5212\u7684\u7ebf\u4e0d\u53d7\u5f71\u54cd\uff1a\u90a3\u662f\u4f60\u7684\u6307\u4ee4\uff0c\u4e0d\u662f\u6211\u4eec\u7684\u5224\u65ad\uff0c\u7167\u6837\u4f1a\u54cd\u3002',
     '\u5230\u6807\u7684\u9875\u53ef\u4ee5\u770b\u6bcf\u6761\u89c4\u5219\u5404\u81ea\u88ab\u54ea\u4e00\u9053\u4e0a\u9650\u5c01\u7684\u3002'],
-  capTipNone:['\u8fd9\u53ea\u6807\u7684\u5728\u90a3\u6761\u89c4\u5219\u4e0a\u4ece\u6ca1\u88ab\u8bc4\u7ea7\u8fc7\uff0c\u6240\u4ee5\u5b83\u7684\u544a\u8b66\u5230\u4e0d\u4e86\u624b\u673a\u3002',
+  capTipNone:x=>[`这只标的的 **${x}** 规则从没被评级过，所以它的告警到不了手机。`,
     '\u6ca1\u6709\u8bc4\u7ea7\u4e0d\u7b49\u4e8e\u901a\u8fc7 \u2014\u2014 \u5b83\u7684\u610f\u601d\u662f\u6ca1\u4eba\u6d4b\u8fc7\u8fd9\u6761\u89c4\u5219\u5728\u8fd9\u53ea\u6807\u7684\u4e0a\u7ba1\u4e0d\u7ba1\u7528\uff0c\u800c\u6211\u4eec\u5411\u5916\u5931\u8d25\u3002',
     '\u91cd\u8dd1\u4e00\u6b21\u521d\u59cb\u5316\u5c31\u4f1a\u8865\u4e0a\u3002'],
-  capTip:['\u8fd9\u53ea\u6807\u7684\u7684\u4ef7\u91cf\u544a\u8b66\u53ea\u7559\u5728\u9875\u9762\u4e0a\uff0c\u4f60\u7684\u624b\u673a\u4e0d\u4f1a\u54cd\u3002',
+  capTip:x=>[`这只标的的 **${x}** 告警只留在页面上，你的手机不会响。`,
           '\u5728\u5b83\u5168\u90e8\u7684\u5386\u53f2\u8bb0\u5f55\u4e0a\u91cd\u8dd1\u8fd9\u6761\u89c4\u5219\uff0c\u89e6\u53d1\u540e\u90a3\u4e94\u5929\u5e76\u4e0d\u7a33\u5b9a\u5730\u6bd4\u5e73\u5e38\u7684\u4e94\u5929\u66f4\u52a8\u8361 \u2014\u2014 95% \u533a\u95f4\u4e0b\u63a2\u5230 1.0 \u4ee5\u4e0b\uff0c\u300c\u4e0e\u5e73\u5e38\u65e0\u5f02\u300d\u8fd9\u4e2a\u53ef\u80fd\u6027\u6392\u9664\u4e0d\u4e86\u3002',
           '\u89c4\u5219\u7167\u5e38\u8dd1\uff0c\u544a\u8b66\u7167\u5e38\u51fa\u73b0\u5728\u8fd9\u91cc\u3002\u70b9\u5f00\u8be5\u6807\u7684\u770b\u5177\u4f53\u6570\u5b57\u3002'],
   capTipOther:['\u8fd9\u6761\u544a\u8b66\u53ea\u7559\u5728\u9875\u9762\u4e0a\uff0c\u4f60\u7684\u624b\u673a\u4e0d\u4f1a\u54cd\u3002',
           '\u538b\u5b83\u7684\u90a3\u4e00\u9879\u5199\u5728\u5361\u7247\u91cc \u2014\u2014 \u70b9\u5f00\u770b\u539f\u56e0\u4e0e\u5177\u4f53\u6570\u5b57\u3002'],
-  capTipThin:['\u8fd9\u53ea\u6807\u7684\u7684\u4ef7\u91cf\u544a\u8b66\u53ea\u7559\u5728\u9875\u9762\u4e0a\uff0c\u4f60\u7684\u624b\u673a\u4e0d\u4f1a\u54cd\u3002',
+  capTipThin:x=>[`这只标的的 **${x}** 告警只留在页面上，你的手机不会响。`,
           '\u5b83\u7684\u8bb0\u5f55\u8fd8\u51d1\u4e0d\u51fa\u5224\u65ad\u6240\u9700\u7684\u4e94\u4e2a\u72ec\u7acb\u89e6\u53d1\u6bb5\u3002\u8fd9\u662f\u300c\u6682\u4e0d\u8bc4\u4f30\u300d\uff0c\u4e0d\u662f\u300c\u65e0\u6548\u300d \u2014\u2014 \u5386\u53f2\u653b\u591f\u4e86\u5b83\u53ef\u80fd\u7ffb\u8fc7\u6765\u3002',
           '\u89c4\u5219\u7167\u5e38\u8dd1\uff0c\u544a\u8b66\u7167\u5e38\u51fa\u73b0\u5728\u8fd9\u91cc\u3002\u70b9\u5f00\u8be5\u6807\u7684\u770b\u5177\u4f53\u6570\u5b57\u3002'],
   covCapUnclear:(d,m,lo)=>`它的告警只留在页面上，不会响你的手机：在全部 ${d.toLocaleString('en-US')} 个交易日的记录上，触发后那五天与平常的五天分不开 —— ${m} 倍，95% 区间下探到 ${lo}。`,
@@ -3009,6 +3024,8 @@ const COPY = {
   hVol:'30 日波动率',
   hDD:'距自身高点',
   hCost:'成本价', hFired:'触发',
+  basisFrom:when=>`读数取自 ${when}`,
+  basisFiredOn:when=>` \u00b7 ${when}`,
   hFiredTip:'这一行两条腿都过了线，因此出了告警。点这个标记打开那条告警。它读的是触发记录，不是旁边那两根条 —— 那两根是证据，这个是结论。',
   rowFiredAria:(sym,rule)=>`${sym}：${rule} 已触发 —— 打开这条告警`,
   hCostTip:'这个仓位的每股平均成本。同一行的市值与累计盈亏都是由它算出来的 —— 这一列是输入，那两列是结果。',
@@ -3350,6 +3367,7 @@ function applyData(raw){
   }));
 
   SCAN_BY = Object.fromEntries((raw.findings.scan||[]).map(r=>[r.symbol,r]));
+  SCAN_ASOF = raw.findings.asOf || null;
   /* before the findings are adapted, not after: a standing alert reads its start date out
      of this, and set afterwards every one of them came through with no date at all */
   ALERT_STATE = (raw.alertState && raw.alertState.keys) || {};
@@ -3626,6 +3644,7 @@ function newsFor(f){
 }
 let SYMBOL_FILES = {};
 let SCAN_BY = {};
+let SCAN_ASOF = null;   /* Alert basis 那一组列的时刻，见 basisVintage */
 let ALL_POSITIONS = [], ALL_ALERTS = [];
 let USER_LINES = {};   /* scan rows by symbol; not `SCAN`, which is a local in renderHoldings */
 let ALERTS_ENABLED = null;
@@ -4504,6 +4523,13 @@ let TIP_FOR = null;
 const TIP_SEL = '[data-tip],[data-tip-text]';
 function tipTextOf(el){
   const k = el.dataset.tip;
+  /* ⚠️ 有些浮窗要带一个只有调用处知道的词（比如投递上限那颗点要说清是日线还是盘中）。
+     文案键是数组，参数只该填进**第一句** —— 后面几句是通则，与范围无关。
+     不给参数就退回无参调用，老的 data-tip 一个都不受影响。 */
+  if(k && el.dataset.tipArg){
+    const v = T(k, el.dataset.tipArg);
+    return Array.isArray(v) ? v : v;
+  }
   if(k) return T(k);
   const t = el.dataset.tipText || '';
   /* a computed tip may arrive as a JSON array of lines, for the same reason a copy key
@@ -7365,7 +7391,8 @@ function scanTable(){
                     (((a.trigger||{}).unit||a.unit||'session')===g));
           if(idx<0) idx=ACTIVE.findIndex(a=>a.symbol===p.sym);
           return `<span class="row-fired" role="button" tabindex="0"
-            data-open="${idx<0?'':idx}" title="${T('pill'+f.signalId)}"
+            data-open="${idx<0?'':idx}" title="${T('pill'+f.signalId)}${
+              (function(){ const w=basisVintageOf(p.sym); return w ? T('basisFiredOn', w) : ''; })()}"
             aria-label="${T('rowFiredAria', p.sym, T('pill'+f.signalId))}">${
             markGlyph(6.5, PILL_BG[SIGNALS[f.signalId].tone], SIGNALS[f.signalId].tone)}</span>`;
         })()}${symIcon(p,i,20)}<b>${p.sym}</b></td>
@@ -8375,6 +8402,33 @@ function letterBlock(sym,tone,px){
    glyph would be the page reporting a fault the reader can do nothing about, next to a
    row whose numbers are all fine. */
 const LOGO_MAX_PX = 32;        /* the crypto source is 64px; half of it stays crisp at 2x */
+/* ── 投递上限的那颗点 ──────────────────────────────────────────────────────
+   ⚠️ 这里原来是一枚写着 `NO PUSH · INTRADAY` 的黄色徽标。十五行里七行都挂着它，
+      一眼看过去像产品坏了 —— 而它说的其实是「这条规则在这只标的上还没验够」，
+      是一句关于**证据**的话，不是一句关于**故障**的话。字号和颜色把它说成了后者。
+   改成标的图标左侧一颗点：在场、可点、不喊。范围与理由全部进浮窗。
+   ⚠️ **范围词原来在徽标文字里，现在必须进浮窗** —— 否则换个形状就等于把信息删了。
+      三种情况各一句话，见 `capTip*`。
+   ⚠️ 「没有评级」也是不推（`deliveryOf` 里缺失直接封 L2）。它和「L1、会推」
+      此前都不显示徽标 —— 两种相反的状态长得一样。现在前者有点，后者没有。 */
+function capDot(p){
+  const G = (longOf(p).grades) || {};
+  /* ETF 不启用 PV5 —— 它只有一条价量规则。 */
+  const APPLY = p.cls==='etf' ? [['PV1','session']] : [['PV1','session'],['PV5','bar']];
+  const capped = APPLY.filter(([sid])=>{ const g=G[sid]; return !(g && g.maxDelivery==='L1'); });
+  if(!capped.length) return '';
+  /* 两条都封时说「价量告警」而不是「这只票」——
+     用户线（US1–3）在 deliveryOf 里是豁免的，这只票照样会为你自己划的线响。 */
+  const one = capped.length===1 && APPLY.length>1;
+  const g0  = G[capped[0][0]];
+  const tip = !one ? 'capTipAll'
+            : !g0 ? 'capTipNone'
+            : g0.verdict==='insufficient_sample' ? 'capTipThin' : 'capTip';
+  const scope = T('capScope')[one ? capped[0][1] : 'all'];
+  return `<span class="cap-dot" data-tip="${tip}" data-tip-arg="${scope}"
+    aria-label="${T('capMarkRow', p.sym, scope)}"></span>`;
+}
+
 function symIcon(p,i,size){
   const px=size||20, tone=cv(SYM_TONE[i%5]);
   if(!p.logo) return letterBlock(p.sym,tone,px);
@@ -8486,6 +8540,42 @@ function readingsAt(p, unit){
 }
 function readingsOf(p){
   return readingsAt(p, STATE.grain==='intraday' ? 'bar' : 'session');
+}
+
+/* ── Alert basis 这一组列有自己的时钟 ──────────────────────────────────
+   页面头上的 `checked … ET` 来自 prices/intraday（每 15 分钟刷），
+   而这一组的读数来自日线 producer 最后一次落盘的那根 bar。
+   两者可以相差几天：周日看到的价格是周日的，价量读数是周五的。
+
+   ⚠️ 不写这个日期，读者会把整组读成「此刻」。实测后果：
+   右侧「0 alerts today」与左侧两个绿色触发标记同屏，
+   唯一合理的推断是「最新数据算过了、没达标」——
+   而真相是**最新数据根本没算过**。页面把「算过没过线」与「没算过」
+   画成了同一个样子，于是诱导出了一个错误且合理的结论。
+
+   ⚠️ 用逐行的 `scan[].asOf`，不用顶层那个。混合账本在周末有**两个**
+   「最近收盘」：美股停在周五，加密每天都有 —— producer 正是为此
+   逐行记了 bar 日期，顶层那个只是其中较晚的一个。
+
+   ⚠️ 裸日期走 onDate（只切字符），不走 etDate（先解析成瞬时再转 ET）——
+   `2026-08-21` 会被当成 UTC 零点，转到 ET 就变成 8月20日。 */
+function basisVintageOf(sym){
+  if(STATE.grain==='intraday'){
+    const t=(META.freshness||{}).intraday;
+    return t ? `${etDate(t)} ${clock(t)}` : '';
+  }
+  const d=(SCAN_BY[sym]||{}).asOf;
+  if(d) return onDate(d);
+  return SCAN_ASOF ? etDate(SCAN_ASOF) : '';   /* 老数据没有逐行 asOf */
+}
+/* 整组一个标签：全同报一个日期，跨日报区间。 */
+function basisVintage(){
+  const shown=[...new Set(POSITIONS.map(p=>basisVintageOf(p.sym)).filter(Boolean))];
+  if(!shown.length) return '';
+  if(shown.length===1) return shown[0];
+  /* ⚠️ 排序按原始日期，不按渲染出来的字符串 —— 中文「8月9日」会排在「8月21日」后面 */
+  const raw=[...new Set(POSITIONS.map(p=>(SCAN_BY[p.sym]||{}).asOf).filter(Boolean))].sort();
+  return raw.length>1 ? `${onDate(raw[0])}\u2013${onDate(raw[raw.length-1])}` : shown[0];
 }
 
 function renderHoldings(){
@@ -8675,42 +8765,16 @@ function cells(p, keys){
        space on every other row. The pill rail took the same badge the same way several
        rounds ago, 168px to 324px. The column that varies by symbol is the one that can
        carry a per-symbol mark. */
-    sym:`<td><div class="sym-cell">${symIcon(p,POSITIONS.indexOf(p))}
+    sym:`<td><div class="sym-cell">${capDot(p)}${symIcon(p,POSITIONS.indexOf(p))}
       ${/* ⚠️ 标记必须与代码同一行。`.sym-tx` 是纵向 flex —— 标记挂在名字后面时
              它自成第三行，那一行把 44px 的行撑到 62px，整张表跟着错位，
              而多出来的高度里什么都没有。 */''}
       <span class="sym-tx"><span class="sym-line"><b>${p.sym}</b>
         ${p.thresholdSource==='fallback_solved'
           ? `<span class="fb-mark" data-tip="fbTip">${T('fbMark')}</span>`:''}
-        ${/* ⚠️ 投递上限也要在这一行看得见。它原来只在 Tab 2 与被压下来的那张卡上说，
-             于是一只从没触发过的标的，用户得逐个点开才知道哪几只不会响手机。
-             与兜底标记同一个位置、同一种字形 —— 两者都是「这只票的规则有个附加条件」。 */''
-        }${(function(){
-            /* ⚠️ 原来只看 `grades.PV1` —— 于是一只 PV1 是 L1、PV5 却推不了的标的，
-               行上一枚徽标都没有，而它的盘中告警永远不会响。实测 SOL 就是这样:
-               卡片上标着 no push，持仓表那一行干干净净。
-               ⚠️ 而且「没有评级」也是不推（`deliveryOf` 里缺失直接封 L2），
-               此前它和「L1、会推」一样不显示徽标 —— 两种相反的状态长得一样。
-               ⚠️ 范围写进徽标本身，不跟上方那个 daily|intraday 切换走 ——
-               那个切换管的是右侧读数列，跟这里不是一回事。 */
-            const G=(longOf(p).grades||{});
-            /* ETF 不启用 PV5 —— 它只有一条价量规则。 */
-            const APPLY = p.cls==='etf' ? [['PV1','session']] : [['PV1','session'],['PV5','bar']];
-            const capped = APPLY.filter(([sid])=>{
-              const g=G[sid]; return !(g && g.maxDelivery==='L1'); });
-            if(!capped.length) return '';
-            /* ⚠️ 两条都封时**不并排挂两枚** —— 它们说的是同一件事，而标的格没有那个宽度。
-               但也**不能写成光秃秃的 `no push`**:用户线（US1–3）在 `deliveryOf` 里是豁免的，
-               这只票照样会为你自己划的线响。所以合成的那一枚精确到「价量告警」，
-               不是「这只票」。范围词的取舍规则:
-                 只封一条 → 说是哪一条    全都封 → 说「价量告警」（ETF 只有一条，也走这支） */
-            const one = capped.length===1 && APPLY.length>1;
-            const g0 = G[capped[0][0]];
-            const tip = !one ? 'capTipAll'
-                      : !g0 ? 'capTipNone'
-                      : g0.verdict==='insufficient_sample' ? 'capTipThin' : 'capTip';
-            return `<span class="fb-mark cap-mark" data-tip="${tip}">${
-              T('capMarkS', T('capScope')[one ? capped[0][1] : 'all'])}</span>`; })()}
+        ${/* 投递上限不在这一行 —— 它是图标左侧那颗点（`capDot`）。
+             放在名字后面时，`.sym-tx` 是纵向 flex，标记会自成第三行，
+             把 44px 的行撑到 62px，整张表跟着错位。 */''}
         </span><em>${p.name}</em>
         ${SCAN?'':`<span class="vol-inline num">${T('hVol')} ${
           p.vol30==null ? dash : p.vol30.toFixed(2)+'%'}</span>`}</span></div></td>`,
@@ -8754,7 +8818,8 @@ function cells(p, keys){
       const g=(STATE.grain==='intraday')?'bar':'session';
       const idx=alertBySym[p.sym+'|'+g] ?? alertBySym[p.sym];
       return `<td class="c-fired"><span class="row-fired" role="button" tabindex="0"
-        data-open="${idx==null?'':idx}" title="${T('pill'+f.signalId)}"
+        data-open="${idx==null?'':idx}" title="${T('pill'+f.signalId)}${
+          (function(){ const w=basisVintageOf(p.sym); return w ? T('basisFiredOn', w) : ''; })()}"
         aria-label="${T('rowFiredAria', p.sym, T('pill'+f.signalId))}">${
         markGlyph(6.5, PILL_BG[SIGNALS[f.signalId].tone], SIGNALS[f.signalId].tone)}</span></td>`;
     })(),
@@ -8813,7 +8878,10 @@ function paint(){
                `<button data-grain="${v}" class="${STATE.grain===v?'on':''}"${
                  v==='intraday' && !hasIntraday() ? ` disabled data-tip="grainNoneTip"` : ''
                }>${T(k)}</button>`).join('')
-           }${hasIntraday()?'':`<em class="grain-na">${T('grainNone')}</em>`}</span></th></tr>` : '';
+           }${hasIntraday()?'':`<em class="grain-na">${T('grainNone')}</em>`}</span>${
+             (function(){ const w=basisVintage();
+               return w ? `<em class="grp-when">${T('basisFrom', w)}</em>` : ''; })()
+           }</th></tr>` : '';
   document.getElementById('hold-tbl').innerHTML = `
   <thead>${groupHead}<tr>${held.map(k=>HEAD[k]).join('')}${watch.map(k=>HEAD[k]).join('')}</tr></thead><tbody>` +
   POSITIONS.map(p=>{

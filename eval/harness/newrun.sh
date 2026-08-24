@@ -1,5 +1,5 @@
 #!/bin/bash
-# 起一次 eval 真跑。用法：eval/newrun.sh <case> [--go]
+# 起一次 eval 真跑。用法：eval/harness/newrun.sh <case> [--go]
 #
 # 不带 --go 只做准备并打印要投的那句话；带 --go 才真的调 codex。
 #
@@ -16,7 +16,7 @@
 #                 与线上那个公开运行中的 playbook 同名，会被覆盖
 set -euo pipefail
 
-CASE="${1:?用法: eval/newrun.sh <case> [--go] [--no-skill]}"
+CASE="${1:?用法: eval/harness/newrun.sh <case> [--go] [--no-skill]}"
 GO=""
 PICK=1                 # 默认模拟「用户指名了 skill」——那是产品里的真实流程
                        # ⚠️ 一个状态一个词:全套只说「指名 / 未指名」。
