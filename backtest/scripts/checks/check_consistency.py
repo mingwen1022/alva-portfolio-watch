@@ -515,20 +515,56 @@ print(f'✅ mock 产物里的 {len(_data_gaps)} 种 gap 都有文案')
 # `m23_not_run` 名字像欠条，其实是**基线的持久事实** —— M23 在 init 算一次，
 # 此后没有任何 producer 会重算它，只有重跑 init 才可能改变。给它一个例外并写清理由，
 # 比为了让检查器闭嘴去加一个假的 delete 好。
-_NOT_OWED = {'m23_not_run'}
-_owed = {i for i in _ids
-         if any(k in i for k in ('not_yet', 'not_run', 'pending')) and i not in _NOT_OWED}
+# `m23_not_run` 与 `unvalidated_asset_class` 名字像欠条／带载荷，其实都是
+# **init 算一次的持久事实** —— 前者是基线的分布可用性，后者是这本账的资产类别构成。
+# 运行期没有任何 producer 会重算它们，只有重跑 init 才可能改变。
+# 给例外并写清理由，比为了让检查器闭嘴去加一个假的 delete 好。
+_NOT_OWED = {'m23_not_run', 'unvalidated_asset_class'}
+# ⚠️ 判据原来只有名字（not_yet / not_run / pending）。实测 2026-08-25 漏掉了
+#    `holdings_span_multiple_sessions` —— 名字里没有那三个词，于是这个检查
+#    **从没查过它**，而它挂在线上说了一件当时为真、现在为假的事。
+#    补第二条判据：**带载荷的 gap**（`xxx:<这一轮算出来的值>`）断言的是一次具体观察，
+#    构造上不可能是永久边界，因此一律要求有人撕。名字是约定，载荷是结构。
+_PAYLOAD = {i for i in _ids if _re3.search(
+    r'[\"\'`]' + _re3.escape(i) + r':', _src)}
+_owed = ({i for i in _ids
+          if any(k in i for k in ('not_yet', 'not_run', 'pending'))} | _PAYLOAD) - _NOT_OWED
 _cleared = set()
 for _f in _g.glob(os.path.join(os.path.dirname(__file__), '../../../skill/scripts/*.js')):
     _t = open(_f, encoding='utf-8').read()
     for _m in _re3.finditer(r'gaps\w*\.delete\(\s*[\"\'`]([a-z][a-z0-9_]*)', _t):
         _cleared.add(_m.group(1))
-_stuck = sorted(_owed - _cleared)
+    # ⚠️ 撕法不止 `.delete("字面量")` 一种。前缀过滤（`filter(g => !g.startsWith(pfx))`）
+    #    同样是撕，而检查器原来看不见它 —— 于是它会把一个已经修好的 gap 报成没人撕。
+    #    「没查到」和「真没有」又一次长得一样。两种写法都认。
+    for _m in _re3.finditer(r'[\"\'`]([a-z][a-z0-9_]*):[\"\'`]', _t):
+        if _re3.search(r'startsWith|dropMine|dropSpan', _t):
+            _cleared.add(_m.group(1))
+# ⚠️ 棘轮，不是豁免。放宽判据后一次暴露出 8 条同类欠条：它们都带载荷、
+#    都描述这一轮的观察、也都没人撕。一次修完要动多个 producer 并逐条认领归属，
+#    所以先列成明账 —— **这张表只许变短**。新增一条就红，逼着当场决定谁撕它。
+#    ⚠️ 不要为了让检查闭嘴往这张表里加名字。加进来的每一条都是一笔债，
+#       它的后果是：条件消失之后，页面还在说一件当时为真、现在为假的事。
+_OWED_DEBT = {
+    'attribution_daily_cap',        # 额度每日重置，跨日后就是假话
+    'holdings_missing_fields',      # 券商补齐字段后不会自己消失
+    'insufficient_baseline',        # 基线长够了仍挂着
+    'intraday_history_short',       # 同上
+    'multi_currency_unsupported',   # 账本换成单币种后仍挂着
+    'pv5_grade_unavailable',        # 评级补上后仍挂着
+    'scan_empty_with_holdings',     # 下一轮扫出东西了仍挂着
+    'short_positions_unsupported',  # 平掉空头后仍挂着
+}
+_stuck = sorted(_owed - _cleared - _OWED_DEBT)
 if _stuck:
     print('❌ 这些 gap 是欠条，但没有任何 producer 撕它：')
     [print('  ', m) for m in _stuck]
+    print('   要么让它的 producer 撕（照 producer-market 的前缀过滤写法），')
+    print('   要么写清它为什么是永久边界并加进 _NOT_OWED —— 不要加进 _OWED_DEBT。')
     raise SystemExit(1)
-print(f'✅ {len(_owed)} 条欠条型 gap 都有人撕')
+_still = sorted(_OWED_DEBT & _owed - _cleared)
+print(f'✅ {len(_owed - _OWED_DEBT)} 条欠条型 gap 都有人撕'
+      + (f'  ⚠️ 另有 {len(_still)} 条在册未修：' + '、'.join(_still) if _still else ''))
 
 # ---- 四个 producer 在桩环境里真的跑一遍 ----
 # ⚠️ node --check 只做语法解析，抓不到暂时性死区、字段名写错、空数据路径上的崩溃。

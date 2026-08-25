@@ -90,7 +90,8 @@ await feed.run(async (ctx, args = {}) => {
              bars: rows };
   }
 
-  const findings = [], scan = [], gaps = [...(meta.gaps || [])];
+  const findings = [], scan = [];
+  let gaps = [...(meta.gaps || [])];   /* let：跨日那条会被就地撕掉重发，见下 */
 
   /* ⚠️ 混合账本在周末有**两个**「最近收盘」：美股停在周五，加密每天都有。
      一个 asOf 说不了这两件事 —— 把周五的 −0.98% 摆在「周六 20:00」的时间戳下面，
@@ -213,6 +214,25 @@ await feed.run(async (ctx, args = {}) => {
       });
     }
   }
+
+  /* ⚠️ 这两条 gap 描述的都是**这一轮**观察到的情况：有时真有时假。
+     只 push 不撕，它们就只会变成永久的 —— 实测 2026-08-25：
+     15 只全部推进到 08-24（两类同日），而 gaps 里还挂着上一轮的
+     `holdings_span_multiple_sessions:2026-08-21,2026-08-23`，
+     页面照常渲染那句缺口说明，**它在说一件当时为真、现在为假的事**。
+
+     本文件顶上写着「谁发现谁追加，没有人整体清空」—— 那是为了防止一个 producer
+     抹掉别人记的缺口，方向没错，但它漏了一种情况：**拥有者撤回自己那一条**。
+     `producer-market.js` 里已有正确写法（只删自己的前缀，不碰别人的），照它来。
+
+     ⚠️ 判据不是名字，是**带不带载荷**。`xxx:<这一轮算出来的值>` 这种形状
+     断言的是一次具体观察，构造上不可能是永久边界。`fetch_errors:` 与
+     `holdings_span_multiple_sessions:` 都是，两条一起撕 —— 只修撞见的那一条，
+     另一条会在下一次取数成功时以同样的方式变成谎话。 */
+  const OWNED_TRANSIENT = ["fetch_errors:", "holdings_span_multiple_sessions:"];
+  const dropMine = gs => gs.filter(
+    g => !OWNED_TRANSIENT.some(pfx => String(g).startsWith(pfx)));
+  gaps = dropMine(gaps);
 
   if (errs.length) gaps.push("fetch_errors:" + errs.join("|"));
   const spread = [...new Set(Object.values(barDates))].sort();
@@ -436,7 +456,9 @@ await feed.run(async (ctx, args = {}) => {
              scanned: { holdings: port.holdings.length,
                         newsItems: prevScan.newsItems ?? null,
                         newsPassed: prevScan.newsPassed ?? null },
-             gaps: [...new Set([...(prevFj.gaps || []), ...gaps])] },
+             /* ⚠️ 与上一轮并集时同样要先撕 —— 否则刚在 `gaps` 里删掉的那条
+                会被 `prevFj.gaps` 原样并回来，等于没删。 */
+             gaps: [...new Set([...dropMine(prevFj.gaps || []), ...gaps])] },
   });
   await wr("data/portfolio.json", port);
 
