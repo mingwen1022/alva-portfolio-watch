@@ -52,22 +52,51 @@ const seed = () => ({
 });
 
 const KV = { load: async () => "{}", put: async () => {} };
-const CTX = { kv: KV, self: { ts: () => ({ append: async () => {} }) } };
+/* ⚠️ `append` 原来是空函数 —— **推送正文从来没被任何检查看过**，
+   而推送是唯一会打断用户的出口。实测 2026-08-25：EV4 的推送把端点的内部码
+   直接拼了进去，手机上印出「NVDA 2026-08-26 amc」。页面早有对应文案
+   （before open / after close），只有这一路没有。截获下来才查得了。 */
+let PUSHED = [];
+const CTX = { kv: KV, self: { ts: () => ({ append: async xs => { PUSHED.push(...xs); } }) } };
 
 const targets = ["producer.js", "producer-intraday.js", "producer-context.js", "producer-market.js"];
 let bad = 0;
 (async () => {
   for (const t of targets) {
-    global.__FS__ = seed(); global.__WROTE__ = [];
+    global.__FS__ = seed(); global.__WROTE__ = []; PUSHED = [];
     global.__ARGS__ = { root: "/alva/home/u/playbooks/p", playbookUrl: "https://x/y" };
     global.__CTX__ = CTX;
-    global.__HTTP__ = () => [];                 // 取数一律返回空 —— 常态路径
+    /* 取数默认返回空（常态路径）。⚠️ 唯独财报日历给一条**明天**的记录 ——
+       否则 EV4 永远不推，下面那条推送文案检查就是个不会失败的断言。
+       `time` 故意用端点的原始码 `amc`：要测的正是「它有没有被翻成人话」。 */
+    /* ⚠️ 从**种子自己的 asOf** 推，不用真实的今天。种子把 asOf 钉在 2026-08-23，
+       第一版用 `Date.now()+1d` 拿到的是真实的明天，两者差好几天，
+       EV4 的「≤1 个交易日」当场不成立 —— 于是这条推送检查静默地没求值。
+       日期只有一处来源，就不会再错开。 */
+    const _seedAsOf = JSON.parse(global.__FS__["data/portfolio.json"]).asOf.slice(0, 10);
+    const _tmr = new Date(Date.parse(_seedAsOf + "T00:00:00Z") + 86400000)
+      .toISOString().slice(0, 10);
+    global.__HTTP__ = url => /earnings-calendar/.test(String(url))
+      ? [{ date: _tmr, time: "amc" }] : [];
     for (const k of Object.keys(require.cache)) delete require.cache[k];
     try {
       await require(path.join(SK, t));
       await new Promise(r => setTimeout(r, 30));
       console.log(`  ✅ ${t.padEnd(24)} 写了 ${global.__WROTE__.length} 个文件: ${[...new Set(global.__WROTE__)].join(", ") || "（无）"}`);
       if (!global.__WROTE__.length) { console.log(`     ⚠️ 一个文件都没写`); bad++; }
+      /* ⚠️ 推送正文里不许出现内部码。判据是「这个词是给机器看的还是给人看的」：
+         端点的 bmo/amc、契约的 us_equity、投递层级 L1–L4、来源 origin 的 chain/model、
+         裸信号 ID —— 页面对每一个都有名字，推送这一路此前一个都没有。
+         ⚠️ 只在**真的推了**的时候才判，并把捕获条数印出来 ——
+            0 条要看得见，否则「查过了没问题」和「压根没推」长得一样。 */
+      if (PUSHED.length) {
+        const CODES = /(^|[^A-Za-z])(bmo|amc|us_equity|L[1-4]|chain|model|PV[1-5]|EV[1-6]|US[1-3]|DR[1-4]|MA[1-3]|PO[1-4]|PF[1-3])([^A-Za-z]|$)/;
+        const leak = PUSHED.map(x => String(x.body || "")).filter(b2 => CODES.test(b2));
+        if (leak.length) {
+          console.log(`     ❌ 推送正文里有内部码: 「${leak[0].replace(/\n/g, " ⏎ ").slice(0, 90)}」`);
+          bad++;
+        } else console.log(`     ✅ 推送 ${PUSHED.length} 条，正文无内部码`);
+      } else console.log(`     —  这一轮没有推送（本判据未求值）`);
     } catch (e) {
       console.log(`  ❌ ${t.padEnd(24)} ${e.constructor.name}: ${e.message}`);
       if (e.stack) console.log("     " + e.stack.split("\n")[1].trim());

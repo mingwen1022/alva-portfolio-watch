@@ -310,7 +310,18 @@ await feed.run(async (ctx, args = {}) => {
       title: `Portfolio Watch · earnings`,
       body: [ev4.length === 1 ? `${ev4[0].sym} reports within one session`
                               : `${ev4.length} holdings report within one session`, "",
-             ...ev4.map(e => `${e.sym}  ${e.date}${e.time ? "  " + e.time : ""}`),
+             /* ⚠️ 端点给的是 `bmo` / `amc`，那是它的内部码，不是给人看的字。
+                页面早就有对应文案（earnBmo「before open」/ earnAmc「after close」），
+                而推送这一路把原始值直接拼了进去 —— 手机上印出来就是
+                「NVDA 2026-08-26 amc」。CLAUDE.md 的写作约定第 2 条写着
+                「不裸用字母代号」，这里正是漏掉的那处：**同一个事实在页面上有名字、
+                在推送里没有**，而推送恰恰是唯一会打断用户的那个出口。
+                认不出的值原样带出去，不吞掉 —— 未知的码也比没有强。 */
+             ...ev4.map(e => {
+               const WHEN = { bmo: "before open", amc: "after close" };
+               const when = e.time ? (WHEN[String(e.time).toLowerCase()] || e.time) : "";
+               return `${e.sym}  ${e.date}${when ? "  " + when : ""}`;
+             }),
              "", PLAYBOOK_URL].join("\n"),
     }]);
   }
