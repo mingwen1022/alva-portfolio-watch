@@ -232,7 +232,19 @@ async function getJSON(url) {
         let p = n.parentElement, inCode = false;
         while (p) { if (skip.has(p)) { inCode = true; break; } p = p.parentElement; }
         if (inCode) continue;
-        const m = n.nodeValue.match(/NaN|undefined|\\[object Object\\]/);
+        /* ⚠️ null 原本不在这张表里。实测 2026-08-25：线上 DOGE 那张归因卡上
+           并排两行写着「null」—— 模型自搜的来源只回 URL，title 落盘是 null，
+           而页面把它原样印了出来。三个词挡住了 undefined 却没挡住 null，
+           而两者是同一件事：页面在渲染一个它没有的值。
+           ⚠️ 本段在模板字符串里，不能用反引号 —— 会当场截断这个字符串。
+           边界要求两侧非字母，否则 annulled、nullable 这类词会误报。 */
+        let m = n.nodeValue.match(/NaN|undefined|\\[object Object\\]/);
+        /* ⚠️ null 单独一条判据，比另外三个窄。要抓的是**值槽印出了 null**，
+           而 null 在散文里是正当用词 —— 本页方法 tab 就写着 an empirical null（经验零）。
+           判据因此是「这个文本节点短，且 null 独立成词」：值槽都很短，句子不会。
+           第一版用了和另外三词一样的宽判据，当场把那句统计说明报成缺陷。 */
+        if (!m) { const t = n.nodeValue.trim();
+          if (t.length <= 40 && /(^|[^A-Za-z])null([^A-Za-z]|$)/.test(t)) m = ["null"]; }
         if (!m) continue;
         /* ⚠️ 只报匹配到的那个词等于没报 —— 「NaN」三个字母哪里都可能出现，
            拿着它回去找要翻一万一千行模板。把**位置**一起带出来：
@@ -249,8 +261,47 @@ async function getJSON(url) {
       }
       return [...new Set(bad)];
     })()`);
-    A("页面文本里没有 NaN / undefined / [object Object]", banned.length === 0,
+    A("页面文本里没有 NaN / null / undefined / [object Object]", banned.length === 0,
       banned.slice(0, 3).join(" ‖ "));
+
+    /* ── 2b · 弹窗里的禁词 ───────────────────────────────────────────
+       ⚠️ 上面那一遍只扫四个面板。而告警详情弹窗是**另一整片渲染**：
+          归因与来源、围绕触发那根 bar 的 K 线、幅度分位、你的持仓 ——
+          它们全都不在 document.body 的默认可见树里被扫到。
+          实测 2026-08-25：线上 DOGE 卡上并排两行写着「null」，
+          而 L4 全绿 —— 不是判错，是**从来没打开过那扇窗**。
+          做过一次破坏性测试确认这一点：把页面的兜底去掉，上面那一遍照样通过。
+       每张卡都开一次，逐张扫完再关。 */
+    const mdlBanned = await evalJs(`(async () => {
+      if (typeof ACTIVE === 'undefined' || !ACTIVE.length) return [];
+      const skip = new Set();
+      const bad = [];
+      for (let i = 0; i < ACTIVE.length; i++) {
+        openDetail(i);
+        await new Promise(r => setTimeout(r, 120));
+        const body = document.getElementById('mdl-body');
+        if (!body) continue;
+        skip.clear();
+        body.querySelectorAll('pre, code, script, style, noscript, template')
+            .forEach(e => skip.add(e));
+        const walk = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+        for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+          let p2 = n.parentElement, inCode = false;
+          while (p2) { if (skip.has(p2)) { inCode = true; break; } p2 = p2.parentElement; }
+          if (inCode) continue;
+          let m = n.nodeValue.match(/NaN|undefined|\\[object Object\\]/);
+          if (!m) { const t = n.nodeValue.trim();
+            if (t.length <= 40 && /(^|[^A-Za-z])null([^A-Za-z]|$)/.test(t)) m = ["null"]; }
+          if (!m) continue;
+          bad.push(ACTIVE[i].symbol + " " + ACTIVE[i].signalId
+                   + " 「" + n.nodeValue.trim().slice(0, 60) + "」");
+        }
+      }
+      const x = document.getElementById('mdl-x'); if (x) x.click();
+      return [...new Set(bad)];
+    })()`);
+    A("告警弹窗里没有 NaN / null / undefined / [object Object]", mdlBanned.length === 0,
+      mdlBanned.slice(0, 3).join(" ‖ "));
 
     /* ── 3 · 基线天数。要页面在元素上挂 data-base="<SYMBOL>" ──
        ⚠️ 不按下标配对两个列表 —— 两边打同一个键,按键配对。 */

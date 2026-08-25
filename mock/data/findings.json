@@ -42,11 +42,28 @@
      "unit": "bars"
     },
     "attribution": {
-     "timing": "none",
-     "summary": null,
-     "sources": [],
-     "model": null,
-     "generatedAt": null
+     "timing": "untimed",
+     "summary": "Search found no reporting tied to this move; the pages available cover routine price and forecast coverage. The move remains unexplained by external sources.",
+     "sources": [
+      {
+       "title": null,
+       "url": "https://coinmarketcap.com/currencies/example/historical-data/",
+       "publishedAt": null,
+       "source": null,
+       "summary": null,
+       "origin": "model"
+      },
+      {
+       "title": null,
+       "url": "https://example.com/markets/cryptocurrency/detail.cms",
+       "publishedAt": null,
+       "source": null,
+       "summary": null,
+       "origin": "model"
+      }
+     ],
+     "model": "demo",
+     "generatedAt": "2026-08-21T20:00:00-04:00"
     },
     "pnl": {
      "today": 637.51,

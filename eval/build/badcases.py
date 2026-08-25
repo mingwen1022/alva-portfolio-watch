@@ -1594,6 +1594,46 @@ CASES = [
         verified="线上当时正处于失败态（15 只同日而 gap 还挂着），部署后触发一次："
                  "跨日 gap 消失，其余五条边界型 gap 原样保留，没有误伤。",
     ),
+    dict(
+        id="BC72", group="render", sev="med", owner="页面 + 判官（我）",
+        caught=False, fixed="已修 · v1.5.5 已发布",
+        title="归因来源并排两行写着 null，而 L4 全绿 —— 它从没打开过那扇窗",
+        field="attribution.sources[].title", actual="卡上印出字面的「null」",
+        expect="没有标题时退回链接路径",
+        onpage="线上 DOGE 的 PV5 卡，Related sources 两行都是 null",
+        cause="模型自搜的来源只回 URL —— `additionalSources` 就是字符串数组，"
+              "`title` 落盘确实是 null，**这是诚实的**（编一个标题更糟）。"
+              "页面 `newsFor()` 里 `t: x.title` 没有兜底，于是把 null 原样渲染。",
+        why="⚠️ **同一段注释里就写着这件事的另一半。** `source` 字段早就加了 "
+            "`host(url)` 兜底，注释写着「印 undefined 是页面在编一个缺失字段，"
+            "而不是读它真有的那个」—— 隔一个字段的 `title` 没加。\n\n"
+            "⚠️ 同一行还有第二处：`${i.s} · ${clock(i.publishedAt)}` 里时刻是空串，"
+            "渲染成「coinmarketcap.com ·· found by Alva」。"
+            "**孤立的分隔符不是排版瑕疵，它看起来像有个字段没渲染出来。**\n\n"
+            "⚠️ **最值得记的是判官这一侧。** L4 的禁词表有 NaN / undefined / "
+            "[object Object]，**没有 null**；而且第一次加上 null 之后破坏性测试"
+            "**照样没响** —— 因为 L4 只扫四个面板，"
+            "**从来没有打开过告警详情弹窗**。归因与来源、K 线、幅度分位、你的持仓，"
+            "那一整片渲染此前不在任何检查的视野里。「跑过」不等于「查了」。\n\n"
+            "⚠️ 还有一层：三本 mock 账的归因来源都是 0 条，"
+            "**这条渲染路径本地根本没有数据可跑**。同一个形状此前已经害过一次"
+            "（「只取标题和链接、丢了 summary 与 source」躲了很久）。"
+            "本地没有这类数据，本地就永远全绿。",
+        fix=["`t: x.title || linkLabel(x.url)` —— 退回**路径**不是主机名："
+             "主机名右边已经印了一遍，路径才是这一条独有的信息",
+             "元信息行按非空片段 `join(' · ')`，不写死分隔符",
+             "L4 禁词表加 null。⚠️ 判据要比另外三个窄 —— null 在散文里是正当用词"
+             "（方法页写着 an empirical null），第一版用同样的宽判据当场误报。"
+             "改成「文本节点 ≤ 40 字符且 null 独立成词」：值槽都短，句子不会",
+             "⚠️ **L4 加一遍弹窗扫描**：逐条打开告警、扫完再关。这才是真正的缺口",
+             "`build_enrich.py` 给一条 PV1/PV5 装上真实形状的归因（全 origin=model、"
+             "title 全 None、timing=untimed）—— 装的正是最容易出问题的那一种"],
+        assertion="L4「告警弹窗里没有 NaN / null / undefined / [object Object]」。"
+                  "做过破坏性测试：去掉 title 兜底 → 退出码 1，且点名 `BTC PV5 「null」`。"
+                  "⚠️ 加弹窗扫描**之前**做过同一个测试，它没响 —— 那次没响正是这条缺口的证据。",
+        verified="mock 装上归因后产物断言从 296 条涨到 298 条 ——"
+                 "两条此前「跑不到」的断言现在真的求值了。线上 v1.5.5 已发。",
+    ),
 ]
 
 BLIND = {

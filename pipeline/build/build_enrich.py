@@ -92,6 +92,34 @@ for sym,lines in CFG['userLines'].items():
           "context":{"benchmark":None,"sizeRank":None,"pnl":None,
                      "attribution":{"timing":"none","summary":None,"sources":[],
                                     "model":None,"generatedAt":None}}})
+# ── 给一条 PV1 装上真实形状的归因 ──────────────────────────────
+# ⚠️ 三本 mock 账原来归因来源全是 0 条，**整条归因渲染路径本地从没跑过**。
+#    后果实测过两次：① 「只取标题和链接、丢了 summary 与 source」躲了很久，
+#    因为那条自检从来没跑到；② 2026-08-25 线上 DOGE 卡上并排两行写着「null」——
+#    模型自搜的来源只回 URL，title 落盘就是 null，而页面把它原样印了出来。
+#    两次都是同一个形状：**本地没有这类数据，于是本地永远全绿。**
+#
+# 装的是**最容易出问题的那一种**：全部 origin=model，因此
+#   · title / publishedAt / source / summary 全为 None（模型只给 URL，这是诚实的）
+#   · timing 必须是 untimed（契约：无 chain 而 sources 非空）
+#   · summary 里不得出现 \d{1,2}:\d{2} 形式的时刻
+_pv = next((f for f in fj['findings'] if f['signalId'] in ('PV1','PV5')), None)
+if _pv is not None:
+    _pv['context']['attribution'] = {
+        "timing": "untimed",
+        "summary": ("Search found no reporting tied to this move; the pages available cover "
+                    "routine price and forecast coverage. The move remains unexplained by "
+                    "external sources."),
+        "sources": [
+            {"title": None, "url": "https://coinmarketcap.com/currencies/example/historical-data/",
+             "publishedAt": None, "source": None, "summary": None, "origin": "model"},
+            {"title": None, "url": "https://example.com/markets/cryptocurrency/detail.cms",
+             "publishedAt": None, "source": None, "summary": None, "origin": "model"},
+        ],
+        "model": "demo",
+        "generatedAt": ASOF,
+    }
+
 fj['findings'].sort(key=lambda f:(f['triggeredAt'],f['symbol']))
 SCANNED_HOLDER={}   # 在 news.json 写完之后回填，见文件末尾
 fj.pop('gaps',None)          # gaps 只在 meta.json，一处

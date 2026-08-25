@@ -3636,6 +3636,15 @@ function newsFor(f){
      host is the only publisher fact in it, and printing "undefined" instead was the page
      inventing a missing field rather than reading the one that is there. */
   const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return null; } };
+  /* ⚠️ 标题同理，而它漏了。模型自搜的来源只回一个 URL —— `additionalSources` 就是
+     字符串数组，`title` 落盘时确实是 null，那是诚实的（编一个标题更糟）。
+     但页面把 null 原样印了出来：线上 DOGE 那张卡上并排两行写着「null」。
+     上面那句注释讲的正是这件事，只是当时只给 `source` 加了兜底。
+     退回路径而不是主机名 —— 主机名右边已经印了一遍，路径才是这一条独有的信息。 */
+  const linkLabel=u=>{ try{ const x=new URL(u);
+      const path=decodeURIComponent(x.pathname).replace(/\/+$/,'');
+      return path || x.hostname.replace(/^www\./,'');
+    }catch(e){ return String(u||''); } };
   /* ⚠️ The tier was set to `same_window` for every list, which puts "Filed today, in the
      same window" over items whose timing nothing could check — four rows each labelled
      "found by Alva", under a badge on the same block saying the timing is unverified. The
@@ -3643,7 +3652,8 @@ function newsFor(f){
      off the items: a list with no timed chain source claims no window. */
   const timed = src.filter(x=>(x.origin||'chain')==='chain' && x.publishedAt);
   return { tier: timed.length ? 'same_window' : 'untimed', items:src.map(x=>({
-    t:x.title, s:x.source || host(x.url) || '', publishedAt:x.publishedAt, url:x.url,
+    t:x.title || linkLabel(x.url), titled:x.title!=null,
+    s:x.source || host(x.url) || '', publishedAt:x.publishedAt, url:x.url,
     summary:x.summary, sent:sentimentOf(x.sentiment),
     /* Where this item came from, and it decides whether its timestamp counts. A
        deterministic chain fetched the item and the publication time is the endpoint's;
@@ -9388,10 +9398,16 @@ function newsList(n, inner, owner){
            timestamp is worth showing, but the reader has to be able to tell that nothing
            checked either — otherwise a card holding four sources under a timing of
            "none" reads as a fault rather than as the accurate statement it is. */''}
-      <div class="news-meta">${i.s} · ${clock(i.publishedAt)}${
+      ${/* ⚠️ 按非空片段拼，不要写死分隔符。模型自搜的来源没有发布时刻，
+             `clock(null)` 返回空串，于是这一行印成「coinmarketcap.com ·· found by Alva」——
+             两个点中间什么都没有。孤立的分隔符不是排版瑕疵，它看起来像有个字段没渲染出来。 */''}
+      <div class="news-meta">${[
+        i.s,
+        clock(i.publishedAt),
         (i.origin||'chain')==='model'
-          ? ` · <span class="src-model">${T('srcModel')}</span>`
-          : (owner ? ` · ${relOf(owner, i)}` : '')}</div></a>`;
+          ? `<span class="src-model">${T('srcModel')}</span>`
+          : (owner ? relOf(owner, i) : '')
+      ].filter(Boolean).join(' \u00b7 ')}</div></a>`;
   const head = T(n.tier==='untimed' ? 'newsHeadUntimed'
                : n.tier==='earlier' ? 'newsHeadEarlier' : 'newsHeadSame');
   /* Under an explanation these items changed role. On their own they are the block —

@@ -9,7 +9,7 @@
 |---|---|
 | [`PLAN.md`](PLAN.md) | **方案**：要回答什么 · 为什么这么切案例 · 五档判官 · 打分 · 成本 · 造判官的顺序 |
 | [`judges.md`](judges.md) | **判官 spec** —— 每一层实际断言了什么，50 条逐条列出并链到源码行。⚠️ 由 [`build/gen_judges.py`](build/gen_judges.py) 从判官代码生成，**不要手写** |
-| [`badcases.md`](badcases.md) · [`.html`](badcases.html) | **缺陷台账** 70 条：根因 · **判官当时抓到没有** · 修法 · 真跑证据 |
+| [`badcases.md`](badcases.md) · [`.html`](badcases.html) | **缺陷台账** 71 条：根因 · **判官当时抓到没有** · 修法 · 真跑证据 |
 | [`report.html`](report.html) | **跑分报告** 17 轮：每轮的 query · 模式 · 六层结果 · 花费 |
 | [`cases/`](cases/) | 10 个案例，每个一句 `input.md` + 一份 `why.md`（这一轮想测什么、为什么这么挑） |
 | [`judges/`](judges/) | 判官本体 —— `assertions.py`（L0–L3）· `l4_render.js`（L4 渲染）· `l5_extract.py` + `l5_collect.py`（L5 抽题与收票） |
