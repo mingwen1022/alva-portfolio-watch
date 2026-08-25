@@ -1176,6 +1176,10 @@
     align-items:baseline; padding:6px 2px; border-bottom:1px solid var(--line-l12);
     font-size:12px; }
   .alloc-row:last-of-type{ border-bottom:none; }
+  /* 与行区分开：它是对上面所有行的一句总结，不是其中一员 */
+  .alloc-total{ display:flex; justify-content:space-between; align-items:baseline;
+    margin-top:7px; padding-top:7px; border-top:1px solid var(--line-l12);
+    font-size:11.5px; color:var(--text-n5); cursor:help; }
   .alloc-row .dot{ width:9px; height:9px; border-radius:2px; align-self:center; }
   .alloc-row .an{ color:var(--text-n9); min-width:0; }
   /* which holdings make up a theme band, on the row that names it. The theme is not a
@@ -2460,6 +2464,8 @@ const COPY = {
   hVol:'30d vol',
   hDD:'From high',
   hCost:'Cost', hFired:'Fired',
+  allocAll:n=>`all ${n} rows`,
+  allocSumTip:'Every row in this view, including the ones folded away, and cash. It equals the holdings table total — stated here so the two can be reconciled at a glance rather than by adding up the rows.',
   basisFrom:when=>`readings from ${when}`,
   basisFiredOn:when=>` \u00b7 ${when}`,
   hFiredTip:'Both legs crossed their lines on this row, so an alert was raised. The mark opens that alert. It reads the record of what fired, not the two bars beside it — those are the evidence, this is the conclusion.',
@@ -3024,6 +3030,8 @@ const COPY = {
   hVol:'30 日波动率',
   hDD:'距自身高点',
   hCost:'成本价', hFired:'触发',
+  allocAll:n=>`全部 ${n} 项`,
+  allocSumTip:'本视图的每一行，包括折叠起来的和现金。它等于持仓表的合计 —— 印在这里是为了让两者能一眼对上，而不必自己把每一行加起来。',
   basisFrom:when=>`读数取自 ${when}`,
   basisFiredOn:when=>` \u00b7 ${when}`,
   hFiredTip:'这一行两条腿都过了线，因此出了告警。点这个标记打开那条告警。它读的是触发记录，不是旁边那两根条 —— 那两根是证据，这个是结论。',
@@ -8365,9 +8373,17 @@ function memberList(m){
     : m.slice(0,N).join(' &#183; ') + ' ' + T('moreN', m.length-N);
 }
 
+/* 未连接账户时每一行的 amt 都是 null，那时没有总计可言 —— 返回 null 让它整行不出，
+   而不是印一个 $0。 */
+const allocTotal = rs => rs.every(r=>r.amt==null) ? null
+                                                  : rs.reduce((a,r)=>a+(r.amt||0),0);
 function allocPane(view,label){
   ALLOC_VIEW=view;
-  let rows=allocRows(), hidden=0;
+  /* ⚠️ 总计要从**未截断**的那份算。byHolding 折叠时只留 8 行，
+     拿 `rows` 求和会给出一个「看起来是总计、其实只是前八项」的数 ——
+     那比不印总计更糟。 */
+  const allRows=allocRows();
+  let rows=allRows, hidden=0;
   /* the shape of the book is carried by the stacked bar; a 30-row legend underneath
      just repeats the holdings table and drags the column past its neighbour */
   if(view==='sym' && !ALLOC_OPEN && rows.length>8){
@@ -8387,6 +8403,19 @@ function allocPane(view,label){
         <span class="ap num">${r.pct.toFixed(1)}%</span>
       </div>`).join('') +
     (hidden?`<button class="alloc-more" id="alloc-more">${T('moreN',hidden)} &#9662;</button>`:'') +
+    /* ⚠️ 印出总计，是为了让「这一栏和持仓表说的是不是同一件事」变成一眼可看。
+       此前没有它，谁要核对都得自己把 16 行加起来 —— 而本仓库的规则是
+       「需要手工把两个列表对齐时，那个对齐动作本身就是 bug」。
+       实测后果：巡检 bot 自己加了一遍，跨过一次盘中刷新，
+       报了一条「配置视图与持仓表对不上」，差 0.14% —— 两个数都对，只是不同刻。 */
+    (function(){ const t=allocTotal(allRows);
+      /* ⚠️ 这一个数**不跟 `money2` 的窄屏取整**。行可以取整（读者看的是相对大小），
+         而这个数存在的唯一理由是与持仓表/KPI 那个数对上 —— 印成 $156,907
+         而对方是 $156,907.37，差 0.37，一眼对不上就等于没印。 */
+      return t==null ? '' : `<div class="alloc-total" data-tip="allocSumTip">
+        <span>${T('allocAll', allRows.length)}</span>
+        <span class="num">$${t.toLocaleString('en-US',
+          {minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>`; })() +
     `</div>`;
 }
 /* Both views side by side rather than behind a toggle. The two answer different
