@@ -178,6 +178,22 @@ await feed.run(async (ctx, args = {}) => {
       doc.range52w = { low: lows.length ? Math.min(...lows) : null,
                        high: highs.length ? Math.max(...highs) : null,
                        asOf: doc.kline.length ? doc.kline[doc.kline.length - 1].d : null };
+      /* ⚠️ 触发记录也在这里续 —— 此前它**只有 init 写过**，运行期没人更新，
+         于是 kline 每天往前走一格，而画在它上面的历史标记停在初始化那天。
+         整天替换（不是追加）：这一轮手里就是当天的完整判定，重跑一次结果相同。
+         没触发也要走一遍 —— 否则昨天误记的那条永远撕不掉。 */
+      if (rdg) {
+        const dayD = px.d[px.d.length - 1];
+        if (fired) {
+          L.upsertAlertHistory(doc, {
+            d: dayD, signalId: "PV1", z: +rdg.z.toFixed(2),
+            move: +rdg.move.toFixed(5), rvol: +rdg.rvol.toFixed(2),
+            priceLine: +(th.theta_z * rdg.sigma).toFixed(5), volLine: th.theta_v });
+        } else {
+          doc.alertHistory = (doc.alertHistory || [])
+            .filter(h => !(h && h.d === dayD && h.signalId === "PV1"));
+        }
+      }
       await wr(sp, doc);
     } catch (e) { errs.push(`${h.symbol} kline merge: ${e.message}`); }
 

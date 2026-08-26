@@ -10626,10 +10626,24 @@ function longOf(p){
   const sigmaNow = b.sigmaRobust==null ? null : b.sigmaRobust*100;
   const triggerLine = (b.triggerLine||{ session:null, bar:null });
 
+  /* ⚠️ 计数从**画出来的那些**现数，不再读契约里存的那一份。
+     `baselines.historicalTriggers` 只有 init 写过，而标记这边既读 alertHistory
+     又补今天的 findings —— 同一件事存两份、其中一份被补过，自检因此长期报
+     「historicalTriggers.PV5 与画出来的对不上」。
+     现在数的就是 `hits` 与 `intraDays` 本身：**数字与标记构造上一致**，
+     不可能再对不上。契约里那份留作兜底（老数据、或这一版之前的产物）。 */
   const ht = b.historicalTriggers || {};
-  const historicalTriggers = { PV1:ht.PV1==null?null:ht.PV1, PV5:ht.PV5==null?null:ht.PV5,
-                               windowSessions:ht.windowSessions==null?n:ht.windowSessions,
-                               last7:ht.last7||null };
+  const drawn7 = new Set(Array.from({ length: Math.min(7, n) }, (_, k) => n - 1 - k));
+  const historicalTriggers = {
+    PV1: hits.length,
+    PV5: intraDays.size,
+    windowSessions: n,
+    last7: { PV1: hits.filter(h => drawn7.has(h.i)).length,
+             PV5: [...intraDays].filter(i => drawn7.has(i)).length },
+    /* 存的那一份也带出来 —— 两者不等本身是有信息的：它说明这个 playbook
+       自初始化以来又响过几次。页面不显示它，自检可以读。 */
+    stored: (ht.PV1 == null && ht.PV5 == null) ? null
+          : { PV1: ht.PV1 ?? null, PV5: ht.PV5 ?? null } };
   /* the near window is a read of the same record, so the two columns cannot disagree
      about what counts as a trigger */
   const triggersIn = sessions => {

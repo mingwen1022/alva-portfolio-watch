@@ -268,4 +268,61 @@ async function commitMeta(rd, wr, local, owned = {}) {
   return fresh;
 }
 
-module.exports = { grade, pstdev, mulberry32, seedFor, etStamp, rthWindowUTC, isUsDst, returns, median, robust, pstdev, reading, firedPV1, commitFindings, commitMeta };
+/* ── 触发记录：一天一族一条 ────────────────────────────────────────────
+   ⚠️ 这份记录此前**只有 init 写过**，运行期没有任何 producer 更新它。
+      后果实测：DOGE 的 kline 走到 2026-08-25，而 alertHistory 停在 08-21，
+      中间至少 4 次 PV5 触发一条都不在里面 —— Tab 2 的历史标记因此系统性少报。
+
+   ⚠️ 一天一条，不是一次一条。图上一天只有一个位置，同一天两条会叠在一起。
+
+   ⚠️ **整天替换，不是增量追加。** 两个 producer 每轮都重新评估当天全部的 bar，
+      手里本来就是当天的完整名单 —— 整天替换是幂等的，追加不是：
+      盘中每 15 分钟跑一次，追加会让同一根 bar 被记 96 遍。
+
+   ⚠️ `n` 与 `bars.length` 常态就不相等，这是**声明出来的**，不是缺陷：
+      加密一天最多响 96 次，明细不可能全存。
+        n     = 当天真实触发次数
+        bars  = 其中最强的 BARS_KEPT 根（按 |z| 取）
+      让两个数不等这件事写在契约里，比留给读者自己发现好。 */
+const BARS_KEPT = 8;
+
+/** 把一天的记录并进 doc.alertHistory，并按 kline 的窗口裁掉过老的条目。 */
+function upsertAlertHistory(doc, entry) {
+  if (!doc || !entry || !entry.d || !entry.signalId) return doc;
+  const rest = (doc.alertHistory || [])
+    .filter(h => !(h && h.d === entry.d && h.signalId === entry.signalId));
+  /* 只保留画得出来的那一段：页面本来就会丢掉 kline 里没有的日期，
+     留着它们既没用，又会让「记录里有几条」和「图上标了几个」对不上。 */
+  const first = (doc.kline || []).length ? doc.kline[0].d : null;
+  const all = [...rest, entry]
+    .filter(h => !first || h.d >= first)
+    .sort((x, y) => x.d < y.d ? -1 : x.d > y.d ? 1 : (x.signalId < y.signalId ? -1 : 1));
+  doc.alertHistory = all;
+  return doc;
+}
+
+/** 当天所有触发的 bar → 一条 PV5 记录。传进来的必须是**当天的完整名单**。 */
+function pv5DayEntry(day, bars) {
+  if (!bars || !bars.length) return null;
+  const sorted = [...bars].sort((a, b) => Math.abs(b.z) - Math.abs(a.z));
+  const top = sorted[0];
+  return { d: day, signalId: "PV5", n: bars.length,
+           z: top.z, rvol: top.rvol,
+           bars: sorted.slice(0, BARS_KEPT)
+                       .sort((a, b) => String(a.slot) < String(b.slot) ? -1 : 1) };
+}
+
+/** alertHistory → 计数。⚠️ 计数不再单独存 —— 同一件事存两份，
+    其中一份被补过、另一份没补，就是自检报「对不上」的那个根因。 */
+function countTriggers(doc, windowSessions) {
+  const ah = (doc && doc.alertHistory) || [];
+  const kl = (doc && doc.kline) || [];
+  const last7 = new Set(kl.slice(-7).map(k => k.d));
+  const of = id => ah.filter(h => h.signalId === id);
+  return { PV1: of("PV1").length, PV5: of("PV5").length,
+           windowSessions: windowSessions != null ? windowSessions : (kl.length || null),
+           last7: { PV1: of("PV1").filter(h => last7.has(h.d)).length,
+                    PV5: of("PV5").filter(h => last7.has(h.d)).length } };
+}
+
+module.exports = { grade, pstdev, mulberry32, seedFor, etStamp, rthWindowUTC, isUsDst, returns, median, robust, pstdev, reading, firedPV1, commitFindings, commitMeta, upsertAlertHistory, pv5DayEntry, countTriggers, BARS_KEPT };

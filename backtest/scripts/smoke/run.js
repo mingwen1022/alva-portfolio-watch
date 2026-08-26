@@ -29,7 +29,11 @@ const seed = () => ({
            m23: { rho: 0.15, verdict: "pass", n: 504 },
            thresholds: { theta_z: 1.5, theta_v: 2.0, theta_z_bar: 4.75, theta_v_bar: 2.0, source: "validated" },
            signalGrades: { PV1: { maxDelivery: "L1", verdict: "usable" } },
-           slotBaselines: { "13:30": { med: 0, sigma: 0.003, vmed: 1000, n: 90 } },
+           /* ⚠️ 两个槽位。盘中的循环从 i=1 起（第一根没有前收，算不出收益率），
+              所以**被判定的是第二根** —— 只给 13:30 一个基线时，
+              喂进去的第二根 13:45 查不到线，整轮静默跳过。 */
+           slotBaselines: { "13:30": { med: 0, sigma: 0.003, vmed: 1000, n: 90 },
+                            "13:45": { med: 0, sigma: 0.003, vmed: 1000, n: 90 } },
            distributionBar: { slots: {} }, triggerLine: {}, historicalTriggers: {}, degraded: null },
     BBB: { sigmaRobust: 0.05, sigmaAnn: 0.9, baselineDays: 500, usable: true,
            m23: { rho: 0.18, verdict: "pass", n: 504 },
@@ -76,14 +80,40 @@ let bad = 0;
     const _seedAsOf = JSON.parse(global.__FS__["data/portfolio.json"]).asOf.slice(0, 10);
     const _tmr = new Date(Date.parse(_seedAsOf + "T00:00:00Z") + 86400000)
       .toISOString().slice(0, 10);
-    global.__HTTP__ = url => /earnings-calendar/.test(String(url))
-      ? [{ date: _tmr, time: "amc" }] : [];
+    /* ⚠️ 盘中也要喂 —— 否则 PV5 永不触发，`alertHistory` 的写入路径
+       在桩里一次都走不到。实测 2026-08-26：线上那一轮评估了 68 根、全部 quiet，
+       「没写」和「写不了」长得一模一样，只能在这里分开。
+       AAA 的槽位基线是 13:30（σ=0.003 · vmed=1000），θz_bar=4.75 · θv_bar=2.0，
+       所以第二根给 +3%（z=10）和 5000 手（rvol=5）—— 两条腿都过。 */
+    const _d0 = _seedAsOf;
+    global.__HTTP__ = url => {
+      const u = String(url);
+      if (/earnings-calendar/.test(u)) return [{ date: _tmr, time: "amc" }];
+      if (/interval=15min/.test(u)) return [
+        { time_period_start: _d0 + "T13:30:00", price_close: 100, volume_traded: 1000 },
+        { time_period_start: _d0 + "T13:45:00", price_close: 103, volume_traded: 5000 },
+      ];
+      return [];
+    };
     for (const k of Object.keys(require.cache)) delete require.cache[k];
     try {
       await require(path.join(SK, t));
       await new Promise(r => setTimeout(r, 30));
       console.log(`  ✅ ${t.padEnd(24)} 写了 ${global.__WROTE__.length} 个文件: ${[...new Set(global.__WROTE__)].join(", ") || "（无）"}`);
       if (!global.__WROTE__.length) { console.log(`     ⚠️ 一个文件都没写`); bad++; }
+      /* ⚠️ 触发记录必须真的被写进去。此前 alertHistory **只有 init 写过**，
+         运行期没人更新，Tab 2 的历史标记因此停在初始化那天。
+         桩里喂了一根必然触发的 13:45（z=10 · rvol=5），所以这条断言不是空跑。
+         ⚠️ 键是**路径最后两段**（见 alfs 桩），不是 `data/symbols/…` ——
+            第一次就是这里探错，读到 undefined 还以为功能没生效。 */
+      if (t === "producer-intraday.js") {
+        const doc = JSON.parse(global.__FS__["symbols/AAA.json"] || "{}");
+        const e = (doc.alertHistory || []).find(h => h.signalId === "PV5");
+        if (!e) { console.log("     ❌ PV5 触发了却没写进 alertHistory"); bad++; }
+        else if (e.n !== (e.bars || []).length && (e.bars || []).length !== 8) {
+          console.log(`     ❌ n=${e.n} 与 bars=${(e.bars||[]).length} 不符（未截断时应相等）`); bad++;
+        } else console.log(`     ✅ alertHistory 已续: ${e.d} PV5 n=${e.n} bars=${(e.bars||[]).length}`);
+      }
       /* ⚠️ 推送正文里不许出现内部码。判据是「这个词是给机器看的还是给人看的」：
          端点的 bmo/amc、契约的 us_equity、投递层级 L1–L4、来源 origin 的 chain/model、
          裸信号 ID —— 页面对每一个都有名字，推送这一路此前一个都没有。

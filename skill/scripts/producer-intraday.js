@@ -131,20 +131,11 @@ await feed.run(async (ctx, args = {}) => {
        实测 SOL：卡说 00:30（量 207,459，邻居的 7–20 倍），
        而图里最新一根还停在两天前，标记落到 19:45 一根平平的 bar 上。
        两个数字都"对"，指的却不是同一根。 */
-    try {
-      const sp = `data/symbols/${h.symbol}.json`;
-      const doc = await rd(sp);
-      const days = [...new Set(rows.map(r => r[0].slice(0, 10)))].slice(-3);
-      doc.intraday = {
-        unit: "15min", tz: "UTC", sessions: days.length,
-        scope: cls === "crypto" ? "24h" : "rth",
-        bars: rows.filter(r => days.includes(r[0].slice(0, 10)))
-                  .map(r => ({ t: r[0], c: r[1], v: r[2] })),
-      };
-      await wr(sp, doc);
-    } catch (e) { errs.push(`${h.symbol} intraday write: ${e.message}`); }
 
     /* 当天每一根都判。⚠️ 日内累积不替换 —— 只留最强那根会丢掉方向相反的早盘根。 */
+    /* 当天触发的 bar，供循环结束后写触发记录。⚠️ 收全了才写 ——
+       一天一条记录，`n` 数的是当天真实触发次数，不是这一轮新看到的。 */
+    const firedBars = [];
     for (let i = 1; i < rows.length; i++) {
       if (rows[i][0].slice(0, 10) !== day) continue;
       if (cls !== "crypto" && rows[i - 1][0].slice(0, 10) !== day) continue;   // 不跨日算收益
@@ -162,6 +153,9 @@ await feed.run(async (ctx, args = {}) => {
          这一格问的是「今天算了多少根」，与哪根最强无关。 */
       evaluated[h.symbol] = (evaluated[h.symbol] || 0) + 1;
       if (!(Math.abs(z) >= th.theta_z_bar && rvol >= th.theta_v_bar)) continue;
+      /* ⚠️ 记在 `sigOn` **之前**：关掉 PV5 的开关意味着「别再为它告警」，
+         不是「当天没响过」。历史记录写的是事实，不是投递决定。 */
+      firedBars.push({ slot, z: +z.toFixed(2), rvol: +rvol.toFixed(2) });
       /* 面板上 PV5 那个开关此前不接线 —— 关掉它什么也不会发生。
          关掉的含义是「别再为它告警」，读数照旧（`scan[].bar` 在下面照写）。 */
       if (!sigOn("PV5")) continue;
@@ -192,6 +186,28 @@ await feed.run(async (ctx, args = {}) => {
         },
       });
     }
+
+    /* ⚠️ 一次读改写，两件事一起做 —— 此前它在 bar 循环**之前**，
+       所以写不了触发记录（当时还不知道今天响了几根）。分两次读写等于
+       多一次竞争面，而这个文件同时还有日线与盘前 producer 在改。 */
+    try {
+      const sp = `data/symbols/${h.symbol}.json`;
+      const doc = await rd(sp);
+      const days = [...new Set(rows.map(r => r[0].slice(0, 10)))].slice(-3);
+      doc.intraday = {
+        unit: "15min", tz: "UTC", sessions: days.length,
+        scope: cls === "crypto" ? "24h" : "rth",
+        bars: rows.filter(r => days.includes(r[0].slice(0, 10)))
+                  .map(r => ({ t: r[0], c: r[1], v: r[2] })),
+      };
+      /* 整天替换：这一轮评估的是当天全部的 bar，手里就是完整名单。
+         没触发也要走一遍，否则上一轮误记的那条永远撕不掉。 */
+      const entry = L.pv5DayEntry(day, firedBars);
+      if (entry) L.upsertAlertHistory(doc, entry);
+      else doc.alertHistory = (doc.alertHistory || [])
+        .filter(x => !(x && x.d === day && x.signalId === "PV5"));
+      await wr(sp, doc);
+    } catch (e) { errs.push(`${h.symbol} intraday write: ${e.message}`); }
   }
 
   /* ⚠️ 读-改-写，只换掉自己那条信号的行。整体覆盖会把日线 producer 写的 PV1 冲掉，
