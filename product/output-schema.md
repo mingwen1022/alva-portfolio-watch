@@ -1244,8 +1244,11 @@ US3 回撤线   分数      「M22 ≤ 用户设定值」，M22 是距高点回�
   "specVersion": "signal-spec.md@427f4f8",
   "scanned": { "holdings": 5, "newsItems": 187, "newsPassed": 6 },
   "freshness": { "prices": "2026-08-21T16:00:00-04:00",
+                 "daily": "2026-08-21T16:00:00-04:00",
+                 "intraday": "2026-08-21T16:00:00-04:00",
                  "news": "2026-08-21T16:03:00-04:00",
-                 "earningsCalendar": "2026-08-21T06:00:00-04:00" },
+                 "earningsCalendar": "2026-08-21T06:00:00-04:00",
+                 "market": "2026-08-21T16:00:00-04:00" },
   "gaps": ["crypto_attribution_falsified", "newco_short_baseline"]
 }
 ```
@@ -1460,6 +1463,44 @@ findings 不带 `context.sizeRank`，界面走 PV4 覆盖标注。
 界面上因此念作「最近检查 / checked」，**不念「行情更新于 / prices」** ——
 后者会让人以为持仓金额也是那一刻重算的。字段名保留 `prices` 是为了不动契约与四个 producer；
 它念什么和它叫什么在这里不是一回事，而**用户只看得见前者**。
+
+⚠️ **哪个键能证明哪个 producer 跑过，逐个写死在这里 —— 不要照名字推。**
+
+| 键 | 谁写 | 能证明谁跑过 |
+|---|---|---|
+| `prices` | **init.js · 日线 · 盘中**（三家） | **谁都不能** |
+| `daily` | 日线 producer | 日线 |
+| `intraday` | 盘中 producer | 盘中 |
+| `news` · `earningsCalendar` | 新闻 producer | 新闻 |
+| `market` | 行情 producer | 行情 |
+
+### meta.lastPush · 这一轮推了什么
+
+```json
+"lastPush": { "at": "2026-09-03T17:00:22.969Z", "count": 2,
+              "ids": ["2026-09-03:DOGE:PV5:15:45", "2026-09-03:AMD:US2"] }
+```
+
+⚠️ **投递是发出去就不管的。** `ctx.self.ts("alerts","events")` 上只有 `append`，
+没有查询、没有回执 —— 所以「确认送达再标记为已推」在这个 API 上做不到。
+
+而 append 成功、去重表标了、手机上什么都没有，是真实发生过的：
+2026-09-01 18:30Z 之后四个 feed 全线停投，09-03 的 DOGE PV5
+（z=10.58 · rvol=16.01 · L1）在去重表里已被标成「已推」，
+**从我们这一侧完全看不出异常** —— 那才是我们自己的缺陷。
+
+做不到确认，就至少把发出的内容留下痕迹。`lastPush` 与平台的投递记录
+（`alva alert history --automation <owner>/<name>`）可以逐条对账：
+两边对不上就是投递侧的问题，而不再是「不知道发生了什么」。
+
+⚠️ 去重表 `pushedBars:<playbook>` 里的值也从 `1` 改成了**时间戳** ——
+存 `1` 只能回答「标过没有」，回答不了「哪一轮标的」。
+
+`prices` 是「最近一次刷新价格的时刻」，三家都会推它，init 建库当场也写一次。
+把它当成任何一家的存活证据都是错的，本项目在**两处**同时犯过这个错:
+每日核查拿它当日线的证据（它恒等于盘中那一路的时刻），
+eval 的 L0 断言把它标成「日线 producer」并据此报「四个 producer 都跑过」——
+日线整路不跑，那条断言照样绿。`daily` 是为此新增的，只有日线 producer 写它。
 
 ### 净值序列的起点是接入日，不是开仓日
 
