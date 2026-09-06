@@ -1,0 +1,42 @@
+name: 记录 traffic
+
+# ⚠️ GitHub 的 traffic 数据只保留 14 天，过了就永久没了。这个 workflow 的
+#    唯一作用是每天把那个窗口抄进仓库，攒成能看长期趋势的记录。
+#    每天跑一次足够（窗口 14 天，漏几天也补得回来），但漏超过 14 天就有断层。
+
+on:
+  schedule:
+    - cron: "17 3 * * *"      # 每天 03:17 UTC。⚠️ 避开整点 —— 整点是 GitHub
+                              #    调度最拥挤的时候，排队可能延迟很久
+  workflow_dispatch:          # 也允许手动跑，用来验权限
+
+permissions:
+  contents: write             # 只需要写回 traffic/ 那几个文件
+
+concurrency:                  # 手动和定时撞上时，别同时改同一批文件
+  group: traffic
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 拉取并合并
+        env:
+          # ⚠️ Traffic API 要仓库的 write access，而 `permissions:` 块里没有
+          #    administration 这一档 —— 默认的 GITHUB_TOKEN 未必够。
+          #    不够就建一个 PAT 存成仓库 secret TRAFFIC_TOKEN，这里会优先用它。
+          GH_TOKEN: ${{ secrets.TRAFFIC_TOKEN || secrets.GITHUB_TOKEN }}
+        run: python3 .github/scripts/traffic.py
+
+      - name: 有变化才提交
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add traffic
+          # ⚠️ 没变化就退出，不要产生空提交 —— 每天一个空提交会把历史淹掉
+          git diff --staged --quiet && { echo "无变化，跳过"; exit 0; }
+          git commit -m "traffic: $(date -u +%Y-%m-%d)"
+          git push
