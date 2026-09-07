@@ -36,6 +36,21 @@ def api(path):
 try:
     data = {k: api(k) for k in ("clones", "views", "popular/paths", "popular/referrers")}
 except urllib.error.HTTPError as e:
+    # ⚠️ 只报状态码不够 —— GitHub 的 403 响应体里写着到底是哪种 403
+    #    （"Must have push access" / "Resource not accessible by personal access token"
+    #     / "Resource not accessible by integration"），三种的修法完全不同。
+    #    第一版只打了 403 Forbidden，等于把三种病因折成一句。
+    try:
+        print(f"::notice::GitHub 说: {e.read().decode()[:300]}", file=sys.stderr)
+    except Exception:
+        pass
+    # ⚠️ token 本身**绝不能打**。只打前缀和长度 —— 足够分辨用的是哪一个:
+    #    ghp_=classic PAT · github_pat_=fine-grained · ghs_=Actions 默认 GITHUB_TOKEN
+    kind = ("ghs_(Actions 默认 token)" if TOKEN.startswith("ghs_")
+            else "ghp_(classic PAT)" if TOKEN.startswith("ghp_")
+            else "github_pat_(fine-grained PAT)" if TOKEN.startswith("github_pat_")
+            else "未知前缀")
+    print(f"::notice::本次用的 token 类型: {kind} · 长度 {len(TOKEN)}", file=sys.stderr)
     # ⚠️ 403 基本只有一个原因：token 没有仓库的 write access。
     #    Traffic API 要 write，而 Actions 默认的 GITHUB_TOKEN 未必够 ——
     #    `permissions:` 块里根本没有 administration 这一档。
